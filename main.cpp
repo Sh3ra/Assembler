@@ -29,6 +29,8 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str) {
         }
     }
     if (str[0] == ' ') str.erase(str.begin());
+    if (str[str.length() - 1] == '\r') str.erase(str.end() - 1);
+    
     if (str[str.length() - 1] == ' ')str.erase(str.end() - 1);
 }
 
