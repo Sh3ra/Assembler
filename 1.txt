@@ -1,0 +1,70 @@
+FU       START   0
+         LDA     #3
+         STA     BETA
+         LDA     #4
+         STA     GAMMA
+         JSUB    FF
+         J       *
+FA       LDA     BETA
+         DIV     GAMMA
+         STA     ALPHA
+         RSUB
+FB       LDA     BETA
+         MUL     #4
+         STA     BETA
+         LDA     GAMMA
+         MUL     #3
+         ADD     BETA
+         STA     ALPHA
+         RSUB
+FC       LDX     ZERO
+LOOP2    LDCH    BLANK
+         STCH    STR1,X
+         TIX     HUNDERED
+         JLT     LOOP2
+         RSUB
+FD       LDX     ZERO
+LOOP     LDL     ZERO
+         STL     STR2,X
+         RMO     X,A
+         ADD     3
+         RMO     A,X
+         COMP    HUNDERED
+         JLT     LOOP
+         RSUB
+FE       LDX     ZERO       
+RLOOP    TD      M 
+         JEQ     RLOOP    
+         RD      M
+         COMP    #4
+         JEQ     DONE
+         TIX     HUNDERED
+         J       RLOOP
+DONE     RMO     X,A
+         STA     LENGTH
+         RSUB
+FF       TD      M
+         JEQ     FF 
+         RD      M
+         SUB     #48
+         MUL     #16
+         STA     TEMP
+A        TD      M
+         JEQ     A    
+         RD      M
+         SUB     #48
+         ADD     TEMP
+         RSUB
+ALPHA    RESW    1
+BETA     RESW    1
+GAMMA    RESW    1
+ZERO     WORD    0
+BLANK    BYTE    C' '
+HUNDERED WORD    100
+STR1     RESB    100
+STR2     RESW    100
+M        BYTE    X'F3'
+DATA     RESW    1
+LENGTH   RESB    1
+TEMP     RESW    1
+         END
