@@ -69,6 +69,7 @@ int main() {
     for (int i = 0; i < code.size(); i++) {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
+        cout<<code[i]<<"\n";
         for (auto & j : regexVector) {
             if (regex_match(code[i], j)) {
                 found = true;
