@@ -30,11 +30,11 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str) {
     }
     if (str[0] == ' ') str.erase(str.begin());
     if (str[str.length() - 1] == '\r') str.erase(str.end() - 1);
-    
+
     if (str[str.length() - 1] == ' ')str.erase(str.end() - 1);
 }
 
-vector<string> readFile(const string& filename) {
+vector<string> readFile(const string &filename) {
     vector<string> answer;
     std::ifstream file(filename);
     std::string str;
@@ -71,8 +71,8 @@ int main() {
     for (int i = 0; i < code.size(); i++) {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
-        cout<<code[i]<<"\n";
-        for (auto & j : regexVector) {
+        cout << code[i] << "\n";
+        for (auto &j : regexVector) {
             if (regex_match(code[i], j)) {
                 found = true;
             }
