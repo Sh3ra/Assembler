@@ -80,10 +80,10 @@ vector<regex> initializeRegexVector() {
     regexVector.push_back(emptyLine);
     return regexVector;
 }
-void decToHexa(int n) 
+string decToHexa(int n) 
 {    
     // char array to store hexadecimal number 
-    char hexaDeciNum[100]; 
+    string hexaDeciNum="";
       
     // counter for hexadecimal number array 
     int i = 0; 
@@ -98,12 +98,12 @@ void decToHexa(int n)
         // check if temp < 10 
         if(temp < 10) 
         { 
-            hexaDeciNum[i] = temp + 48; 
+            hexaDeciNum+= temp + 48; 
             i++; 
         } 
         else
         { 
-            hexaDeciNum[i] = temp + 55; 
+            hexaDeciNum+= temp + 55; 
             i++; 
         } 
           
@@ -111,8 +111,8 @@ void decToHexa(int n)
     } 
       
     // printing hexadecimal number array in reverse order 
-    for(int j=i-1; j>=0; j--) 
-        cout << hexaDeciNum[j]; 
+    reverse(hexaDeciNum.begin(),hexaDeciNum.end());
+    return hexaDeciNum;
 } 
 
 void writeobjCode(vector<vector<string>>code)
@@ -120,13 +120,22 @@ void writeobjCode(vector<vector<string>>code)
     
     objectCodeTable table;
     freopen("objcode.txt","w",stdout);
-    string temp=code[0][0];
-    while (code[0][0].size()<5)
+    int prog_len=0;
+    while (code[0][0].size()<6)
     {
         code[0][0]+=" ";
     }
-    cout<<"H"<<code[0][0]<<"^"<<code[0][2]<<"^";
-    decToHexa(code.size());
+    while (code[0][2].size()<6)
+    {
+        code[0][2]="0"+code[0][2];
+    }
+    string Sprog_len=decToHexa(prog_len);
+
+    while (Sprog_len.size()<6)
+    {
+        Sprog_len="0"+prog_len;
+    }
+    string HRecord="H"+code[0][0]+"^"+code[0][2]+"^"+prog_len;
 }
 
 int main() {
