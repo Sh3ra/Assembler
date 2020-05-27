@@ -56,7 +56,7 @@ public:
             result = decToHexa2(stoi(line[2]));
             length = 6;
         } else if (line[1] == "resw") {
-            length = 3 * stoi(line[2]);
+            length = 6 * stoi(line[2]);
             wordOrByte = false;
         } else if (line[1] == "byte") {
             if (line[2][0] == 'c') {
@@ -71,7 +71,7 @@ public:
             }
             length = 2;
         } else {
-            length = stoi(line[2]);
+            length = 2 * stoi(line[2]);
             wordOrByte = false;
         }
         while (result.size() < length && wordOrByte) {
