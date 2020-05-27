@@ -162,7 +162,7 @@ void writeobjCode(vector<vector<string>> code) {
     makeNewT(Slctr);
     string line = "^";
     for (int i = 1; i < code.size() - 1; i++) {
-        if (code[i][1] == "word" || code[i][1] == "byte" || code[i][1] == "resw" || code[i][1] == "resb" ||) {
+        if (code[i][1] == "word" || code[i][1] == "byte" || code[i][1] == "resw" || code[i][1] == "resb") {
             pair<string, int> he5o = zattout.handleDataType(code[i], Slctr);
             lctr += he5o.second;
             line += he5o.first;

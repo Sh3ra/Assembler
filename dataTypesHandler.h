@@ -62,8 +62,8 @@ public:
             if (line[2][0] == 'c') {
                 char c = line[2][2];
                 result = to_string((int) c);
-            } else if (line[2][0] == 'c') {
-                for (int i = 0; line[2][i] != '\''; ++i) {
+            } else if (line[2][0] == 'x') {
+                for (int i = 2; line[2][i] != '\''; ++i) {
                     result += line[2][i];
                 }
             } else {
