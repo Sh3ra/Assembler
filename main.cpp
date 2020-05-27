@@ -1,6 +1,5 @@
 #include <iostream>
 #include "bits/stdc++.h"
-#include "objectCodeTable.h"
 
 using namespace std;
 
@@ -30,12 +29,28 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str) {
         }
     }
     if (str[0] == ' ') str.erase(str.begin());
-    if (str[str.length() - 1] == '\r') str.erase(str.end() - 1);
-
     if (str[str.length() - 1] == ' ')str.erase(str.end() - 1);
+
 }
 
-vector<string> readFile(const string &filename) {
+vector<vector<string>> convertToLabels(vector <string> code) {
+    vector <vector<string> > instructions(code.size());
+    for(int i = 0;i<code.size();i++) {
+        std::string s = code[i];
+        std::string delimiter = " ";
+        s+=" ";
+        size_t pos = 0;
+        std::string token;
+        while ((pos = s.find(delimiter)) != std::string::npos) {
+            token = s.substr(0, pos);
+            instructions[i].push_back(token);
+            s.erase(0, pos + delimiter.length());
+        }
+    }
+    return instructions;
+}
+
+vector<string> readFile(const string& filename) {
     vector<string> answer;
     std::ifstream file(filename);
     std::string str;
@@ -64,65 +79,29 @@ vector<regex> initializeRegexVector() {
     regexVector.push_back(emptyLine);
     return regexVector;
 }
-void decToHexa(int n) 
-{    
-    // char array to store hexadecimal number 
-    char hexaDeciNum[100]; 
-      
-    // counter for hexadecimal number array 
-    int i = 0; 
-    while(n!=0) 
-    {    
-        // temporary variable to store remainder 
-        int temp  = 0;
-          
-        // storing remainder in temp variable. 
-        temp = n % 16; 
-          
-        // check if temp < 10 
-        if(temp < 10) 
-        { 
-            hexaDeciNum[i] = temp + 48; 
-            i++; 
-        } 
-        else
-        { 
-            hexaDeciNum[i] = temp + 55; 
-            i++; 
-        } 
-          
-        n = n/16; 
-    } 
-      
-    // printing hexadecimal number array in reverse order 
-    for(int j=i-1; j>=0; j--) 
-        cout << hexaDeciNum[j]; 
-} 
-void writeobjCode(vector<vector<string>>code)
-{
-    objectCodeTable table;
-    freopen("objcode.txt","w",stdout);
-    string temp=code[0][0];
-    while (code[0][0].size()<5)
-    {
-        code[0][0]+=" ";
-    }
-    cout<<"H"<<code[0][0]<<"^"<<code[0][2]<<"^";
-    decToHexa(code.size());
-}
+
 
 int main() {
     vector<regex> regexVector = initializeRegexVector();
     vector<string> code = readFile("1.txt");
+
     for (int i = 0; i < code.size(); i++) {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
-        for (auto &j : regexVector) {
+        cout<<code[i]<<"\n";
+        for (auto & j : regexVector) {
             if (regex_match(code[i], j)) {
                 found = true;
             }
         }
         if (!found) cout << "Unmatched " << i << " " << code[i] << endl;
+    }
+    vector <vector< string>> v = convertToLabels(code);
+    for(int i = 0;i<v.size();i++){
+        for(int j = 0;j<v[i].size();j++) {
+            cout<<v[i][j]<<" ";
+        }
+        cout<<"\n";
     }
     return 0;
 }
