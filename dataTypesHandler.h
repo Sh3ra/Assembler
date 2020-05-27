@@ -77,7 +77,7 @@ public:
         while (result.size() < length && wordOrByte) {
             result.insert(0, "0");
         }
-        pair<string, int> out(result, length);
+        pair<string, int> out(result, length / 2);
         return out;
     }
 };
