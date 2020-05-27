@@ -1,5 +1,5 @@
 #include <iostream>
-#include "bits/stdc++.h"
+#include <bits/stdc++.h>
 #include "objectCodeTable.h"
 #include "dataTypesHandler.h"
 using namespace std;
@@ -161,47 +161,77 @@ int getHex(string hexstr)
 {
     return (int)strtol(hexstr.c_str(), 0, 16);
 }
+
+vector<string> TRecords;
+int Tindex = -1;
+void makeNewT(string s)
+{
+    Tindex++;
+    TRecords.push_back("T");
+    TRecords[Tindex] += s + "^";
+}
+
 void writeobjCode(vector<vector<string>> code)
 {
     dataTypesHandler zattout;
-    vector<string> TRecords;
     objectCodeTable table;
     freopen("objcode.txt", "w", stdout);
     int prog_len = 0;
-    int Tindex = 0;
-    TRecords.push_back("T");
     while (code[0][2].size() < 6)
     {
         code[0][2] = "0" + code[0][2];
     }
     string Slctr = code[0][2];
     int lctr = getHex(Slctr);
-
+    makeNewT(Slctr);
+    string line = "^";
     for (int i = 1; i < code.size() - 1; i++)
     {
-        if (code[i][0] == "")
+        if (code[i][1] == "word" || code[i][1] == "byte" || code[i][1] == "resw" || code[i][1] == "resb" ||)
         {
-            TRecords[Tindex] += Slctr + "^";
-            string co = "";
-            string temp = decToHexa(co.size() / 2);
-            while (temp.size()< 2)
+            pair<string, int> he5o = zattout.handleDataType(code[i], Slctr);
+            lctr += he5o.second;
+            line += he5o.first;
+        }
+        Slctr = decToHexa(lctr);
+        while (Slctr.size() < 6)
+        {
+            Slctr = "0" + Slctr;
+        }
+        if (line.size() >= 51)
+        {
+            string temp = decToHexa(line.size() / 2);
+            while (temp.size() < 2)
             {
                 temp = "0" + temp;
             }
-            TRecords[Tindex] += temp + "^" + co;
-            lctr = lctr + table.table[code[i][1]].first;
-            Slctr = decToHexa(lctr);
-            while (Slctr.size() < 6)
-            {
-                Slctr = "0" + Slctr;
-            }
+            TRecords[Tindex] += temp  + line;
+            line="^";
+            makeNewT(Slctr);
         }
-        if(code[i][1] == "word"){
-            string he5o=zattout.handleDataType(code[i],Slctr);
-            int x;
-            he5o=zattout.symbolicTable["zattout"];
-            x=8987870;
-        }
+        // if (code[i][0] == "")
+        // {
+        //     TRecords[Tindex] += Slctr + "^";
+        //     string co = "";
+        //     string temp = decToHexa(co.size() / 2);
+        //     while (temp.size()< 2)
+        //     {
+        //         temp = "0" + temp;
+        //     }
+        //     TRecords[Tindex] += temp + "^" + co;
+        //     lctr = lctr + table.table[code[i][1]].first;
+        //     Slctr = decToHexa(lctr);
+        //     while (Slctr.size() < 6)
+        //     {
+        //         Slctr = "0" + Slctr;
+        //     }
+        // }
+        // if(code[i][1] == "word"){
+        //     string he5o=zattout.handleDataType(code[i],Slctr);
+        //     int x;
+        //     he5o=zattout.symbolicTable["zattout"];
+        //     x=8987870;
+        // }
     }
 
     while (code[0][0].size() < 6)

@@ -1,5 +1,6 @@
-FU       START   0
+MOSTAFA  START   0
 ZATTOUT  WORD    50
-         ADDR    A,PC
-         LDA     ZATTOUT
+MARAWAN  BYTE    X'20'
+YAHIA    RESW    4
+SH3RA    RESB    5 
          END
