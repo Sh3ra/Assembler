@@ -1,3 +1,5 @@
 FU       START   0
-         LDA     #3
+ZATTOUT  WORD    50
+         ADDR    A,PC
+         LDA     #1
          END
