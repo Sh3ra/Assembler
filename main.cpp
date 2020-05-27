@@ -181,7 +181,10 @@ string get_address(string op,dataTypesHandler zattout)
     {
         return zattout.symbolicTable[op];
     }
-    return "";
+    else
+    {
+        
+    }
 }
 
 void writeobjCode(vector<vector<string>> code)
