@@ -65,6 +65,22 @@ vector<vector<string>> convertToLabels(vector<string> code)
             s.erase(0, pos + delimiter.length());
         }
     }
+    for(int i = 0; i<instructions.size();i++){
+        if(instructions[i].size()<3) {
+            if(instructions[i].size()==2) {
+               vector<string> v;
+               v.push_back("");
+               v.push_back(instructions[i][0]);
+               v.push_back(instructions[i][1]);
+            }
+            if(instructions[i].size()==1){
+                vector<string> v;
+                v.push_back("");
+                v.push_back(instructions[i][0]);
+                v.push_back("");
+            }
+        }
+    }
     return instructions;
 }
 
