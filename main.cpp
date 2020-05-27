@@ -117,10 +117,23 @@ string decToHexa(int n)
 
 void writeobjCode(vector<vector<string>>code)
 {
-    
+    vector<string>TRecords;
     objectCodeTable table;
     freopen("objcode.txt","w",stdout);
     int prog_len=0;
+    int Tindex=0;
+    int lctr=0;
+    TRecords.push_back("T");
+
+    for (int i = 1; i < code.size()-1; i++)
+    {  
+        if(code[i][0]=="")
+        {
+            
+        }
+        lctr=lctr+table.table[code[i][1]].first;
+    }
+    
     while (code[0][0].size()<6)
     {
         code[0][0]+=" ";
@@ -135,7 +148,14 @@ void writeobjCode(vector<vector<string>>code)
     {
         Sprog_len="0"+prog_len;
     }
-    string HRecord="H"+code[0][0]+"^"+code[0][2]+"^"+prog_len;
+    string HRecord="H"+code[0][0]+"^"+code[0][2]+"^"+Sprog_len;
+    cout<<HRecord<<endl;
+    for (int i = 0; i < TRecords.size(); i++)
+    {
+        cout<<TRecords[i]<<endl;
+    }
+    cout<<"E"<<code[0][0];
+    
 }
 
 int main() {
