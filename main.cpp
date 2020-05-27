@@ -122,8 +122,13 @@ void writeobjCode(vector<vector<string>>code)
     freopen("objcode.txt","w",stdout);
     int prog_len=0;
     int Tindex=0;
-    int lctr=0;
     TRecords.push_back("T");
+    while (code[0][2].size()<6)
+    {
+        code[0][2]="0"+code[0][2];
+    }
+    string Slctr=code[0][2];
+    int lctr=0;
 
     for (int i = 1; i < code.size()-1; i++)
     {  
@@ -137,10 +142,6 @@ void writeobjCode(vector<vector<string>>code)
     while (code[0][0].size()<6)
     {
         code[0][0]+=" ";
-    }
-    while (code[0][2].size()<6)
-    {
-        code[0][2]="0"+code[0][2];
     }
     string Sprog_len=decToHexa(prog_len);
 
