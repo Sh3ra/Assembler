@@ -175,6 +175,15 @@ void makeNewT(string s)
     TRecords[Tindex] += s + "^";
 }
 
+string get_address(string op,dataTypesHandler zattout)
+{
+    if(zattout.symbolicTable[op]!="")
+    {
+        return zattout.symbolicTable[op];
+    }
+    return "";
+}
+
 void writeobjCode(vector<vector<string>> code)
 {
     dataTypesHandler zattout;
@@ -196,6 +205,15 @@ void writeobjCode(vector<vector<string>> code)
             pair<string, int> he5o = zattout.handleDataType(code[i], Slctr);
             lctr += he5o.second;
             line += he5o.first;
+        }
+        else if (code[i][0] == "")
+        {
+            line += table.table[code[i][1]].second;
+            lctr += table.table[code[i][1]].first;
+            if (code[i][1][0] != '+')
+            {
+                line += get_address(code[i][2],zattout);
+            }
         }
         Slctr = decToHexa(lctr);
         while (Slctr.size() < 6)
@@ -251,14 +269,15 @@ void writeobjCode(vector<vector<string>> code)
             code[0][0] += " ";
         }
     }
-    else TRecords.pop_back();
+    else
+        TRecords.pop_back();
     string Sprog_len = decToHexa(lctr - 1 - getHex(code[0][2]));
 
     while (Sprog_len.size() < 6)
     {
         Sprog_len = "0" + Sprog_len;
     }
-    string HRecord = "H" + code[0][0].substr(0,6) + "^" + code[0][2] + "^" + Sprog_len;
+    string HRecord = "H" + code[0][0].substr(0, 6) + "^" + code[0][2] + "^" + Sprog_len;
     cout << HRecord << endl;
     for (int i = 0; i < TRecords.size(); i++)
     {
