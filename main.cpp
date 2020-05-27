@@ -1,6 +1,7 @@
 #include <iostream>
 #include "bits/stdc++.h"
 #include "objectCodeTable.h"
+#include "dataTypesHandler.h"
 using namespace std;
 
 void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
@@ -65,16 +66,20 @@ vector<vector<string>> convertToLabels(vector<string> code)
             s.erase(0, pos + delimiter.length());
         }
     }
-    for(int i = 0; i<instructions.size();i++){
-        if(instructions[i].size()<3) {
-            if(instructions[i].size()==2) {
-               vector<string> v;
-               v.push_back("");
-               v.push_back(instructions[i][0]);
-               v.push_back(instructions[i][1]);
-               instructions[i] = v;
+    for (int i = 0; i < instructions.size(); i++)
+    {
+        if (instructions[i].size() < 3)
+        {
+            if (instructions[i].size() == 2)
+            {
+                vector<string> v;
+                v.push_back("");
+                v.push_back(instructions[i][0]);
+                v.push_back(instructions[i][1]);
+                instructions[i] = v;
             }
-            if(instructions[i].size()==1){
+            if (instructions[i].size() == 1)
+            {
                 vector<string> v;
                 v.push_back("");
                 v.push_back(instructions[i][0]);
@@ -158,6 +163,7 @@ int getHex(string hexstr)
 }
 void writeobjCode(vector<vector<string>> code)
 {
+    dataTypesHandler zattout;
     vector<string> TRecords;
     objectCodeTable table;
     freopen("objcode.txt", "w", stdout);
@@ -178,7 +184,7 @@ void writeobjCode(vector<vector<string>> code)
             TRecords[Tindex] += Slctr + "^";
             string co = "";
             string temp = decToHexa(co.size() / 2);
-            while (temp.size() / 2 < 2)
+            while (temp.size()< 2)
             {
                 temp = "0" + temp;
             }
@@ -190,6 +196,12 @@ void writeobjCode(vector<vector<string>> code)
                 Slctr = "0" + Slctr;
             }
         }
+        if(code[i][1] == "word"){
+            string he5o=zattout.handleDataType(code[i],Slctr);
+            int x;
+            he5o=zattout.symbolicTable["zattout"];
+            x=8987870;
+        }
     }
 
     while (code[0][0].size() < 6)
@@ -200,7 +212,7 @@ void writeobjCode(vector<vector<string>> code)
 
     while (Sprog_len.size() < 6)
     {
-        Sprog_len = "0" + prog_len;
+        Sprog_len = "0" + Sprog_len;
     }
     string HRecord = "H" + code[0][0] + "^" + code[0][2] + "^" + Sprog_len;
     cout << HRecord << endl;
@@ -208,7 +220,7 @@ void writeobjCode(vector<vector<string>> code)
     {
         cout << TRecords[i] << endl;
     }
-    cout << "E" << code[0][0];
+    cout << "E" << code[0][2];
 }
 
 int main()

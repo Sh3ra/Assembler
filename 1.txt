@@ -1,5 +1,5 @@
 FU       START   0
 ZATTOUT  WORD    50
          ADDR    A,PC
-         LDA     #1
+         LDA     ZATTOUT
          END

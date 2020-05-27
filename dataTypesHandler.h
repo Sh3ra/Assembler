@@ -13,7 +13,7 @@ using namespace std;
 
 #endif //ASSEMBLER_DATATYPESHANDLER_H
 
-string decToHexa(int n) {
+string decToHexa2(int n) {
     // char array to store hexadecimal number
     string hexaDeciNum;
 
@@ -44,25 +44,25 @@ string decToHexa(int n) {
 }
 
 class dataTypesHandler {
+public:
     unordered_map<string, string> symbolicTable;
-
     string handleDataType(vector<string> line, string location) {
         symbolicTable[line[0]] = std::move(location);
         int length;
         string result;
         if (line[1] == "word") {
-            result = decToHexa(stoi(line[2]));
+            result = decToHexa2(stoi(line[2]));
             length = 6;
         } else if (line[1] == "resw") {
             length = 3 * stoi(line[2]);
         } else if (line[1] == "byte") {
-            result = decToHexa(stoi(line[2]));
+            result = decToHexa2(stoi(line[2]));
             length = 2;
         } else {
             length = stoi(line[2]);
         }
         while (result.size() < length) {
-            result.append(0, '0');
+            result="0"+result;
         }
         return result;
     }
