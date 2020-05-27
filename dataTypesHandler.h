@@ -15,23 +15,23 @@ using namespace std;
 
 string decToHexa2(int n) {
     // char array to store hexadecimal number
-    string hexaDeciNum;
+    string hexaDeciNum = "";
 
     // counter for hexadecimal number array
     int i = 0;
     while (n != 0) {
         // temporary variable to store remainder
-        int temp;
+        int temp = 0;
 
         // storing remainder in temp variable.
         temp = n % 16;
 
         // check if temp < 10
         if (temp < 10) {
-            hexaDeciNum += std::to_string(temp + 48);
+            hexaDeciNum += temp + 48;
             i++;
         } else {
-            hexaDeciNum += std::to_string(temp + 55);
+            hexaDeciNum += temp + 55;
             i++;
         }
 
