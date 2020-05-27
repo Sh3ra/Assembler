@@ -13,6 +13,7 @@ using namespace std;
 class objectCodeTable {
 public:
     unordered_map<string, pair<int,string>> table;
+    unordered_map<string, string> registersTable;
     objectCodeTable() {
         table["add"] = make_pair(3, "18");
         table["+add"] = make_pair(3, "18");
@@ -115,6 +116,15 @@ public:
         table["svc"] = make_pair(2, "B0");
         table["tio"] = make_pair(1, "F8");
         table["tixr"] = make_pair(2, "B8");
+        registersTable["a"] = "0";
+        registersTable["x"] = "1";
+        registersTable["l"] = "2";
+        registersTable["b"] = "3";
+        registersTable["s"] = "4";
+        registersTable["t"] = "5";
+        registersTable["f"] = "6";
+        registersTable["pc"] = "8";
+        registersTable["sw"] = "9";
     }
 };
 
