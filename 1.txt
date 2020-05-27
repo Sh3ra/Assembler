@@ -1,6 +1,7 @@
-MOSTAFA  START   0
+MOSTAFA  START   A
 ZATTOUT  WORD    50
-MARAWAN  BYTE    X'20'
+MARWAN  BYTE    X'20'
 YAHIA    RESW    4
 SH3RA    RESB    5 
+         LDA     50
          END
