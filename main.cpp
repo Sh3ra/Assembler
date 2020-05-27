@@ -1,5 +1,6 @@
 #include <iostream>
 #include "bits/stdc++.h"
+#include "objectCodeTable.h"
 
 using namespace std;
 
@@ -73,7 +74,7 @@ void decToHexa(int n)
     while(n!=0) 
     {    
         // temporary variable to store remainder 
-        int temp  = 0; 
+        int temp  = 0;
           
         // storing remainder in temp variable. 
         temp = n % 16; 
@@ -99,6 +100,7 @@ void decToHexa(int n)
 } 
 void writeobjCode(vector<vector<string>>code)
 {
+    objectCodeTable table;
     freopen("objcode.txt","w",stdout);
     string temp=code[0][0];
     while (code[0][0].size()<5)
@@ -115,7 +117,6 @@ int main() {
     for (int i = 0; i < code.size(); i++) {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
-        cout << code[i] << "\n";
         for (auto &j : regexVector) {
             if (regex_match(code[i], j)) {
                 found = true;
