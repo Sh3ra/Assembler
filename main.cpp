@@ -5,9 +5,12 @@
 
 using namespace std;
 
-void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str) {
-    for (int i = 0; i < str.length(); i++) {
-        if (str[i] == '\'') {
+void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
+{
+    for (int i = 0; i < str.length(); i++)
+    {
+        if (str[i] == '\'')
+        {
             i++;
             while (str[i] != '\'')
                 i++;
@@ -15,19 +18,25 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str) {
         if (str[i] == '\t')
             str[i] = ' ';
     }
-    for (int i = 0; i < str.length(); i++) {
+    for (int i = 0; i < str.length(); i++)
+    {
         if (str[i] >= 'A' && str[i] <= 'Z')
             str[i] += 32;
-        if (str[i] == '\'') {
+        if (str[i] == '\'')
+        {
             i++;
             while (str[i] != '\'')
                 i++;
         }
-        if (i + 1 < str.length()) {
-            if (str[i] == ' ' && (str[i + 1] == ' ' || str[i + 1] == ',')) {
+        if (i + 1 < str.length())
+        {
+            if (str[i] == ' ' && (str[i + 1] == ' ' || str[i + 1] == ','))
+            {
                 str.erase(str.begin() + i);
                 i--;
-            } else if (str[i] == ',' && str[i + 1] == ' ') {
+            }
+            else if (str[i] == ',' && str[i + 1] == ' ')
+            {
                 str.erase(str.begin() + i + 1);
                 i--;
             }
@@ -41,30 +50,37 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str) {
         str.erase(str.end() - 1);
 }
 
-vector<vector<string>> convertToLabels(vector<string> code) {
+vector<vector<string>> convertToLabels(vector<string> code)
+{
     vector<vector<string>> instructions(code.size());
-    for (int i = 0; i < code.size(); i++) {
+    for (int i = 0; i < code.size(); i++)
+    {
         std::string s = code[i];
         std::string delimiter = " ";
         s += " ";
         size_t pos = 0;
         std::string token;
-        while ((pos = s.find(delimiter)) != std::string::npos) {
+        while ((pos = s.find(delimiter)) != std::string::npos)
+        {
             token = s.substr(0, pos);
             instructions[i].push_back(token);
             s.erase(0, pos + delimiter.length());
         }
     }
-    for (int i = 0; i < instructions.size(); i++) {
-        if (instructions[i].size() < 3) {
-            if (instructions[i].size() == 2) {
+    for (int i = 0; i < instructions.size(); i++)
+    {
+        if (instructions[i].size() < 3)
+        {
+            if (instructions[i].size() == 2)
+            {
                 vector<string> v;
                 v.push_back("");
                 v.push_back(instructions[i][0]);
                 v.push_back(instructions[i][1]);
                 instructions[i] = v;
             }
-            if (instructions[i].size() == 1) {
+            if (instructions[i].size() == 1)
+            {
                 vector<string> v;
                 v.push_back("");
                 v.push_back(instructions[i][0]);
@@ -76,17 +92,20 @@ vector<vector<string>> convertToLabels(vector<string> code) {
     return instructions;
 }
 
-vector<string> readFile(const string &filename) {
+vector<string> readFile(const string &filename)
+{
     vector<string> answer;
     std::ifstream file(filename);
     std::string str;
-    while (std::getline(file, str)) {
+    while (std::getline(file, str))
+    {
         answer.push_back(str);
     }
     return answer;
 }
 
-vector<regex> initializeRegexVector() {
+vector<regex> initializeRegexVector()
+{
     vector<regex> regexVector;
     string declarationRes = R"([a-z]\w*\s(resb|resw)\s\d{1,4})";
     string declarationByte = R"([a-z]\w*\s(byte)\s(x'([a-f0-9]{0,14})'|c'(\D|\S){0,15}'))";
@@ -106,13 +125,15 @@ vector<regex> initializeRegexVector() {
     return regexVector;
 }
 
-string decToHexa(int n) {
+string decToHexa(int n)
+{
     // char array to store hexadecimal number
     string hexaDeciNum = "";
 
     // counter for hexadecimal number array
     int i = 0;
-    while (n != 0) {
+    while (n != 0)
+    {
         // temporary variable to store remainder
         int temp = 0;
 
@@ -120,10 +141,13 @@ string decToHexa(int n) {
         temp = n % 16;
 
         // check if temp < 10
-        if (temp < 10) {
+        if (temp < 10)
+        {
             hexaDeciNum += temp + 48;
             i++;
-        } else {
+        }
+        else
+        {
             hexaDeciNum += temp + 55;
             i++;
         }
@@ -136,44 +160,53 @@ string decToHexa(int n) {
     return hexaDeciNum;
 }
 
-int getHex(string hexstr) {
-    return (int) strtol(hexstr.c_str(), 0, 16);
+int getHex(string hexstr)
+{
+    return (int)strtol(hexstr.c_str(), 0, 16);
 }
 
 vector<string> TRecords;
 int Tindex = -1;
 
-void makeNewT(string s) {
+void makeNewT(string s)
+{
     Tindex++;
     TRecords.push_back("T");
     TRecords[Tindex] += s + "^";
 }
 
-void writeobjCode(vector<vector<string>> code) {
+void writeobjCode(vector<vector<string>> code)
+{
     dataTypesHandler zattout;
     objectCodeTable table;
     freopen("objcode.txt", "w", stdout);
     int prog_len = 0;
-    while (code[0][2].size() < 6) {
+    while (code[0][2].size() < 6)
+    {
         code[0][2] = "0" + code[0][2];
     }
     string Slctr = code[0][2];
     int lctr = getHex(Slctr);
     makeNewT(Slctr);
     string line = "^";
-    for (int i = 1; i < code.size() - 1; i++) {
-        if (code[i][1] == "word" || code[i][1] == "byte" || code[i][1] == "resw" || code[i][1] == "resb") {
+    for (int i = 1; i < code.size() - 1; i++)
+    {
+        if (code[i][1] == "word" || code[i][1] == "byte" || code[i][1] == "resw" || code[i][1] == "resb")
+        {
             pair<string, int> he5o = zattout.handleDataType(code[i], Slctr);
             lctr += he5o.second;
             line += he5o.first;
         }
         Slctr = decToHexa(lctr);
-        while (Slctr.size() < 6) {
+        while (Slctr.size() < 6)
+        {
             Slctr = "0" + Slctr;
         }
-        if (line.size() >= 51) {
+        if (line.size() >= 51)
+        {
             string temp = decToHexa(line.size() / 2);
-            while (temp.size() < 2) {
+            while (temp.size() < 2)
+            {
                 temp = "0" + temp;
             }
             TRecords[Tindex] += temp + line;
@@ -204,33 +237,46 @@ void writeobjCode(vector<vector<string>> code) {
         //     x=8987870;
         // }
     }
+    string temp = decToHexa(line.size() / 2);
+    while (temp.size() < 2)
+    {
+        temp = "0" + temp;
+    }
+    TRecords[Tindex] += temp + line;
 
-    while (code[0][0].size() < 6) {
+    while (code[0][0].size() < 6)
+    {
         code[0][0] += " ";
     }
     string Sprog_len = decToHexa(prog_len);
 
-    while (Sprog_len.size() < 6) {
+    while (Sprog_len.size() < 6)
+    {
         Sprog_len = "0" + Sprog_len;
     }
     string HRecord = "H" + code[0][0] + "^" + code[0][2] + "^" + Sprog_len;
     cout << HRecord << endl;
-    for (int i = 0; i < TRecords.size(); i++) {
+    for (int i = 0; i < TRecords.size(); i++)
+    {
         cout << TRecords[i] << endl;
     }
     cout << "E" << code[0][2];
 }
 
-int main() {
+int main()
+{
     vector<regex> regexVector = initializeRegexVector();
     vector<string> code = readFile("1.txt");
 
-    for (int i = 0; i < code.size(); i++) {
+    for (int i = 0; i < code.size(); i++)
+    {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
         cout << code[i] << "\n";
-        for (auto &j : regexVector) {
-            if (regex_match(code[i], j)) {
+        for (auto &j : regexVector)
+        {
+            if (regex_match(code[i], j))
+            {
                 found = true;
             }
         }
