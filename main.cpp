@@ -248,7 +248,7 @@ void writeobjCode(vector<vector<string>> code)
     {
         code[0][0] += " ";
     }
-    string Sprog_len = decToHexa(prog_len);
+    string Sprog_len = decToHexa(lctr);
 
     while (Sprog_len.size() < 6)
     {
