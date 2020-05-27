@@ -46,24 +46,38 @@ string decToHexa2(int n) {
 class dataTypesHandler {
 public:
     unordered_map<string, string> symbolicTable;
-    string handleDataType(vector<string> line, string location) {
+
+    pair<string, int> handleDataType(vector<string> line, string location) {
         symbolicTable[line[0]] = std::move(location);
         int length;
         string result;
+        bool wordOrByte = true;
         if (line[1] == "word") {
             result = decToHexa2(stoi(line[2]));
             length = 6;
         } else if (line[1] == "resw") {
             length = 3 * stoi(line[2]);
+            wordOrByte = false;
         } else if (line[1] == "byte") {
-            result = decToHexa2(stoi(line[2]));
+            if (line[2][0] == 'c') {
+                char c = line[2][2];
+                result = to_string((int) c);
+            } else if (line[2][0] == 'c') {
+                for (int i = 0; line[2][i] != '\''; ++i) {
+                    result += line[2][i];
+                }
+            } else {
+                result = decToHexa2(stoi(line[2]));
+            }
             length = 2;
         } else {
             length = stoi(line[2]);
+            wordOrByte = false;
         }
-        while (result.size() < length) {
-            result="0"+result;
+        while (result.size() < length && wordOrByte) {
+            result.insert(0, "0");
         }
-        return result;
+        pair<string, int> out(result, length);
+        return out;
     }
 };
