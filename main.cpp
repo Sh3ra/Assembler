@@ -63,7 +63,51 @@ vector<regex> initializeRegexVector() {
     regexVector.push_back(emptyLine);
     return regexVector;
 }
-
+void decToHexa(int n) 
+{    
+    // char array to store hexadecimal number 
+    char hexaDeciNum[100]; 
+      
+    // counter for hexadecimal number array 
+    int i = 0; 
+    while(n!=0) 
+    {    
+        // temporary variable to store remainder 
+        int temp  = 0; 
+          
+        // storing remainder in temp variable. 
+        temp = n % 16; 
+          
+        // check if temp < 10 
+        if(temp < 10) 
+        { 
+            hexaDeciNum[i] = temp + 48; 
+            i++; 
+        } 
+        else
+        { 
+            hexaDeciNum[i] = temp + 55; 
+            i++; 
+        } 
+          
+        n = n/16; 
+    } 
+      
+    // printing hexadecimal number array in reverse order 
+    for(int j=i-1; j>=0; j--) 
+        cout << hexaDeciNum[j]; 
+} 
+void writeobjCode(vector<vector<string>>code)
+{
+    freopen("objcode.txt","w",stdout);
+    string temp=code[0][0];
+    while (code[0][0].size()<5)
+    {
+        code[0][0]+=" ";
+    }
+    cout<<"H"<<code[0][0]<<"^"<<code[0][2]<<"^";
+    decToHexa(code.size());
+}
 
 int main() {
     vector<regex> regexVector = initializeRegexVector();
