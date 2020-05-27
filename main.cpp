@@ -72,12 +72,14 @@ vector<vector<string>> convertToLabels(vector<string> code)
                v.push_back("");
                v.push_back(instructions[i][0]);
                v.push_back(instructions[i][1]);
+               instructions[i] = v;
             }
             if(instructions[i].size()==1){
                 vector<string> v;
                 v.push_back("");
                 v.push_back(instructions[i][0]);
                 v.push_back("");
+                instructions[i] = v;
             }
         }
     }
