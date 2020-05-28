@@ -174,19 +174,53 @@ void makeNewT(string s)
     TRecords.push_back("T");
     TRecords[Tindex] += s + "^";
 }
-
-string get_address(string op,dataTypesHandler zattout)
+bool is_int(string op)
 {
-    if(zattout.symbolicTable[op]!="")
+    for (char x : op)
+    {
+        if (x < 48 || x > 57)
+            return false;
+    }
+    return true;
+}
+string get_address(string op, dataTypesHandler zattout)
+{
+    if (zattout.symbolicTable[op] != "")
     {
         return zattout.symbolicTable[op];
     }
-    else
+    else if (is_int(op))
     {
-        
     }
 }
-
+bool base = false;
+bool contain_comma(string s)
+{
+    for (char x : s)
+    {
+        if (x == ',')
+            return true;
+    }
+    return false;
+}
+string register_register(string op, objectCodeTable table)
+{
+    string res="";
+    if(!contain_comma(op))
+    {
+        res+=table.registersTable[op];
+    }
+    else
+    {
+        string f="";
+        f+=op[0];
+        res+=table.registersTable[f];
+        f="";
+        f+=op[2];
+        res+=table.registersTable[f];
+    }
+    return res;
+}
 void writeobjCode(vector<vector<string>> code)
 {
     dataTypesHandler zattout;
@@ -213,9 +247,29 @@ void writeobjCode(vector<vector<string>> code)
         {
             line += table.table[code[i][1]].second;
             lctr += table.table[code[i][1]].first;
-            if (code[i][1][0] != '+')
+            if (code[i][2][0] == '@')
             {
-                line += get_address(code[i][2],zattout);
+                line += indirect_address(code[i][2], zattout, code[i][1][0] == '+');
+            }
+            else if (code[i][2][0] == '#')
+            {
+                line += immediate_address(code[i][2], zattout, code[i][1][0] == '+');
+            }
+            else if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] != 'r')
+            {
+                line += index_address(code[i][2], zattout, code[i][1][0] == '+');
+            }
+            else if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
+            {
+                line += register_register(code[i][2], table);
+            }
+            else if (base)
+            {
+                line += base_relative(code[i][2], zattout, code[i][1][0] == '+');
+            }
+            else
+            {
+                line += pc_relative(code[i][2], zattout, code[i][1][0] == '+');
             }
         }
         Slctr = decToHexa(lctr);
