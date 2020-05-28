@@ -172,17 +172,210 @@ bool is_int(string op)
     }
     return true;
 }
-string get_address(string op, dataTypesHandler zattout)
+string HexToBin(string hexdec)
 {
-    if (zattout.symbolicTable[op] != "")
+    long int i = 0;
+    string res = "";
+    while (hexdec[i])
     {
-        return zattout.symbolicTable[op];
+        switch (hexdec[i])
+        {
+        case '0':
+            res = "0000" + res;
+            break;
+        case '1':
+            res = "0001" + res;
+            break;
+        case '2':
+            res = "0010" + res;
+            break;
+        case '3':
+            res = "0011" + res;
+            break;
+        case '4':
+            res = "0100" + res;
+            break;
+        case '5':
+            res = "0101" + res;
+            break;
+        case '6':
+            res = "0110" + res;
+            break;
+        case '7':
+            res = "0111" + res;
+            break;
+        case '8':
+            res = "1000" + res;
+            break;
+        case '9':
+            res = "1001" + res;
+            break;
+        case 'A':
+        case 'a':
+            res = "1010" + res;
+            break;
+        case 'B':
+        case 'b':
+            res = "1011" + res;
+            break;
+        case 'C':
+        case 'c':
+            res = "1100" + res;
+            break;
+        case 'D':
+        case 'd':
+            res = "1101" + res;
+            break;
+        case 'E':
+        case 'e':
+            res = "1110" + res;
+            break;
+        case 'F':
+        case 'f':
+            res = "1111" + res;
+            break;
+        default:
+        }
+        i++;
     }
-    else if (is_int(op))
-    {
-    }
+    return res;
 }
+
+void createMap(unordered_map<string, char> *um) 
+{ 
+    (*um)["0000"] = '0'; 
+    (*um)["0001"] = '1'; 
+    (*um)["0010"] = '2'; 
+    (*um)["0011"] = '3'; 
+    (*um)["0100"] = '4'; 
+    (*um)["0101"] = '5'; 
+    (*um)["0110"] = '6'; 
+    (*um)["0111"] = '7'; 
+    (*um)["1000"] = '8'; 
+    (*um)["1001"] = '9'; 
+    (*um)["1010"] = 'A'; 
+    (*um)["1011"] = 'B'; 
+    (*um)["1100"] = 'C'; 
+    (*um)["1101"] = 'D'; 
+    (*um)["1110"] = 'E'; 
+    (*um)["1111"] = 'F'; 
+} 
+  
+// function to find hexadecimal  
+// equivalent of binary 
+string binToHex(string bin) 
+{ 
+    int l = bin.size(); 
+    int t = bin.find_first_of('.'); 
+      
+    // length of string before '.' 
+    int len_left = t != -1 ? t : l; 
+      
+    // add min 0's in the beginning to make 
+    // left substring length divisible by 4  
+    for (int i = 1; i <= (4 - len_left % 4) % 4; i++) 
+        bin = '0' + bin; 
+      
+    // if decimal point exists     
+    if (t != -1)     
+    { 
+        // length of string after '.' 
+        int len_right = l - len_left - 1; 
+          
+        // add min 0's in the end to make right 
+        // substring length divisible by 4  
+        for (int i = 1; i <= (4 - len_right % 4) % 4; i++) 
+            bin = bin + '0'; 
+    } 
+      
+    // create map between binary and its 
+    // equivalent hex code 
+    unordered_map<string, char> bin_hex_map; 
+    createMap(&bin_hex_map); 
+      
+    int i = 0; 
+    string hex = ""; 
+      
+    while (1) 
+    { 
+        // one by one extract from left, substring 
+        // of size 4 and add its hex code 
+        hex += bin_hex_map[bin.substr(i, 4)]; 
+        i += 4; 
+        if (i == bin.size()) 
+            break; 
+              
+        // if '.' is encountered add it 
+        // to result 
+        if (bin.at(i) == '.')     
+        { 
+            hex += '.'; 
+            i++; 
+        } 
+    } 
+      
+    // required hexadecimal number 
+    return hex;     
+}
+int get_TA(string op)
+{
+
+} 
+string get_address(string op, string opernad, dataTypesHandler zattout,int lctr)
+{
+    string disp = "";
+    string bin = HexToBin(op);
+    bin.pop_back();
+    bin.pop_back();
+    if (op[0] == '#')
+    {
+        bin += "01";
+    }
+    else if (op[0] == '@')
+    {
+        bin += "10";
+    }
+    else
+        bin += "00";
+    if (contain_comma(opernad))
+    {
+        bin += "1";
+    }
+    else
+        bin += "0";
+    int d = 0;
+    if (base)
+    {
+        bin += "10";
+        d = get_TA(opernad) - baseR;
+    }
+    else
+    {
+        bin += "01";
+        d = get_TA(opernad) - lctr;
+    }
+    disp += decToHexa(d);
+    if (op[0] == '+'){
+        bin += "1";
+        while (disp.size()<5)
+        {
+            disp="0"+disp;
+        }
+        disp=disp.substr(0,5);
+    }
+    else{
+        bin += "0";
+        while (disp.size()<3)
+        {
+            disp="0"+disp;
+        }
+        disp=disp.substr(0,3);
+    }
+    return binToHex(bin)+disp;
+}
+
 bool base = false;
+int baseR=0;
 bool contain_comma(string s)
 {
     for (char x : s)
@@ -232,33 +425,22 @@ void writeobjCode(vector<vector<string>> code)
             lctr += he5o.second;
             line += he5o.first;
         }
+        else if (code[i][1]=="base"&&code[i][0] == "")
+        {
+            base=true;
+            baseR=getHex(zattout.symbolicTable[code[i][2]]);
+        }
         else if (code[i][0] == "")
         {
             line += table.table[code[i][1]].second;
             lctr += table.table[code[i][1]].first;
-            if (code[i][2][0] == '@')
-            {
-                line += indirect_address(code[i][2], zattout, code[i][1][0] == '+');
-            }
-            else if (code[i][2][0] == '#')
-            {
-                line += immediate_address(code[i][2], zattout, code[i][1][0] == '+');
-            }
-            else if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] != 'r')
-            {
-                line += index_address(code[i][2], zattout, code[i][1][0] == '+');
-            }
-            else if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
+            if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
             {
                 line += register_register(code[i][2], table);
             }
-            else if (base)
-            {
-                line += base_relative(code[i][2], zattout, code[i][1][0] == '+');
-            }
             else
             {
-                line += pc_relative(code[i][2], zattout, code[i][1][0] == '+');
+                line += get_address(code[i][1], code[i][2], zattout,lctr);
             }
         }
         Slctr = decToHexa(lctr);
