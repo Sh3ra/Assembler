@@ -93,7 +93,7 @@ vector<regex> initializeRegexVector() {
     string declarationWord = R"([a-z]\w*\s(word)\s-?\d{1,4})";
     regex declaration("(" + declarationWord + "|" + declarationByte + "|" + declarationRes + ")");
     regexVector.push_back(declaration);
-    regex access(R"(([a-z]\w*\s)?\+?(st|ld)(x|a|b|s|t|ch)\s(\*|@?[a-z]\w*(,[a-z]\w*)?|#(\d{1,4}|\w*)))");
+    regex access(R"(([a-z]\w*\s)?\+?(st|ld)(x|a|b|s|t|ch)\s(\*|(#|@)?([a-z]\w*|\d{1,4})(,([a-z]\w*|\d{1,4}))?))");
     regexVector.push_back(access);
     regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tixr)\s(\*|[a-z]\w*))");
     regexVector.push_back(jump);
