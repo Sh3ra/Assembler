@@ -1,7 +1,12 @@
-MOSTAFA  START   A
-ZATTOUT  WORD    50
-MARWAN  BYTE     X'20'
-YAHIA    RESW    4
-SH3RA    RESB    5 
-         LDA     5
+         Start   0000
+ALPHA    RESW    1
+Beta     WORD    22
+GAMMA    WORD    1
+         LDA     Beta
+         MUL     #4
+         STA     Beta
+         LDA     GAMMA
+         MUL     #3
+         ADD     Beta
+         STA     ALPHA
          END
