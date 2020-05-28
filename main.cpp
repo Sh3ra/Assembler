@@ -127,20 +127,12 @@ vector<regex> initializeRegexVector()
 
 string decToHexa(int n)
 {
-    // char array to store hexadecimal number
     string hexaDeciNum = "";
-
-    // counter for hexadecimal number array
     int i = 0;
     while (n != 0)
     {
-        // temporary variable to store remainder
         int temp = 0;
-
-        // storing remainder in temp variable.
         temp = n % 16;
-
-        // check if temp < 10
         if (temp < 10)
         {
             hexaDeciNum += temp + 48;
@@ -151,11 +143,8 @@ string decToHexa(int n)
             hexaDeciNum += temp + 55;
             i++;
         }
-
         n = n / 16;
     }
-
-    // printing hexadecimal number array in reverse order
     reverse(hexaDeciNum.begin(), hexaDeciNum.end());
     return hexaDeciNum;
 }
@@ -205,19 +194,19 @@ bool contain_comma(string s)
 }
 string register_register(string op, objectCodeTable table)
 {
-    string res="";
-    if(!contain_comma(op))
+    string res = "";
+    if (!contain_comma(op))
     {
-        res+=table.registersTable[op];
+        res += table.registersTable[op];
     }
     else
     {
-        string f="";
-        f+=op[0];
-        res+=table.registersTable[f];
-        f="";
-        f+=op[2];
-        res+=table.registersTable[f];
+        string f = "";
+        f += op[0];
+        res += table.registersTable[f];
+        f = "";
+        f += op[2];
+        res += table.registersTable[f];
     }
     return res;
 }
@@ -288,29 +277,6 @@ void writeobjCode(vector<vector<string>> code)
             line = "^";
             makeNewT(Slctr);
         }
-        // if (code[i][0] == "")
-        // {
-        //     TRecords[Tindex] += Slctr + "^";
-        //     string co = "";
-        //     string temp = decToHexa(co.size() / 2);
-        //     while (temp.size()< 2)
-        //     {
-        //         temp = "0" + temp;
-        //     }
-        //     TRecords[Tindex] += temp + "^" + co;
-        //     lctr = lctr + table.table[code[i][1]].first;
-        //     Slctr = decToHexa(lctr);
-        //     while (Slctr.size() < 6)
-        //     {
-        //         Slctr = "0" + Slctr;
-        //     }
-        // }
-        // if(code[i][1] == "word"){
-        //     string he5o=zattout.handleDataType(code[i],Slctr);
-        //     int x;
-        //     he5o=zattout.symbolicTable["zattout"];
-        //     x=8987870;
-        // }
     }
     if (line != "^")
     {
