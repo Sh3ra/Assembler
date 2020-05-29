@@ -137,32 +137,41 @@ vector<string> readFile(const string &filename)
     return answer;
 }
 
+void writeFile(const string &filename,vector<string> v)
+{
+    ofstream myfile;
+    myfile.open (filename);
+    vector<string> answer;
+    for(int i = 0;i<v.size();i++) myfile<<v[i]<<"\n";
+    myfile.close();
+}
+
 vector<regex> initializeRegexVector()
 {
-    string label = R"([a-z](\w|$)*)";
-    string address = R"((\*|(#|@)?([a-z]($|\w)*|\d{1,4}))(,(#|@)?([a-z]($|\w)*|\d{1,4}))?)";
-    string accessAddress = R"((\*|(#|@)?([a-z]\w*(,(#|@)?([a-z]\w*|\d{1,4}))?|\d{1,4})))";
+    string label = R"([a-z]((\$|\w)*))";
+    string address = R"((\*|(#|@)?([a-z]((\$|\w)*)|\d{1,4}))(,(#|@)?([a-z]((\$|\w)*)|\d{1,4}))?)";
+    string orgAddress = R"(([a-z]((\$|\w)*)|\d{1,4})((\+|-|\*|/)([a-z]((\$|\w)*)|\d{1,4}))?)";
     vector<regex> regexVector;
     regex commentLine(R"(\.(\W|\S)*)");
     regexVector.push_back(commentLine);
     regex emptyLine("");
     regexVector.push_back(emptyLine);
-    string declarationRes = R"([a-z](\w|$)*\s(resb|resw)\s)" + address;
-    string declarationByte = R"([a-z](\w|$)*\s(byte)\s(x'([a-fA-F0-9]{0,14})'|c'(\D|\S){0,15}'))";
-    string declarationWord = R"([a-z](\w|$)*\s(word)\s-?\d{1,4})";
+    string declarationRes = R"([a-z]((\$|\w)*)\s(resb|resw)\s)" + address;
+    string declarationByte = R"([a-z]((\$|\w)*)\s(byte)\s(x'([a-fA-F0-9]{0,14})'|c'(\D|\S){0,15}'))";
+    string declarationWord = R"([a-z]((\$|\w)*)\s(word)\s-?\d{1,4})";
     regex declaration("(" + declarationWord + "|" + declarationByte + "|" + declarationRes + ")");
     regexVector.push_back(declaration);
-    regex access(R"(([a-z]\w*\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))"+address);
+    regex access(R"(([a-z]((\$|\w)*)\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))"+address);
     regexVector.push_back(access);
-    regex jump(R"(([a-z](\w|$)*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
+    regex jump(R"(([a-z]((\$|\w)*)\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
     regexVector.push_back(jump);
-    regex rsub(R"(([a-z](\w|$)*\s)?rsub(\s[a-z]\w*)?)");
+    regex rsub(R"(([a-z]((\$|\w)*)\s)?rsub(\s[a-z]\w*)?)");
     regexVector.push_back(rsub);
     regex LTORG("ltorg");
     regexVector.push_back(LTORG);
-    regex EQU(R"([a-z](\w|$)*\sequ\s)" +address);
+    regex EQU(R"([a-z]((\$|\w)*)\sequ\s)" +orgAddress);
     regexVector.push_back(EQU);
-    regex ORG(R"(org\s)" + address);
+    regex ORG(R"(org\s)" + orgAddress);
     regexVector.push_back(ORG);
     //goz2 Marwan el gamed geddan
     regex regToRegOperations(R"(^([a-z](?:\w|\$)+\s)?(rmo|addr|subr|mulr|divr|compr)\s([abstxl]\,[abstxl])$)");
@@ -747,10 +756,13 @@ void writeobjCode(vector<vector<string>> code)
 
 int main()
 {
+    string s;
+    cout<<"Enter The FileName To Open: ";
+    cin>>s;
     vector<regex> regexVector = initializeRegexVector();
-    vector<string> code = readFile("1.txt");
+    vector<string> code = readFile(s);
     bool wrong = false;
-    freopen("report.txt","w",stdout);
+    vector<string> report;
     for (int i = 0; i < code.size(); i++)
     {
         bool found = false;
@@ -765,10 +777,13 @@ int main()
         }
         if (!found) {
             cout << "Unmatched " << i << " " << code[i] << endl;
+            report.push_back("Unmatched " + to_string(i) + " " + code[i]);
             wrong = true;
         }
     }
+    writeFile("report.txt", report);
     vector<vector<string>> v = convertToLabels(code);
+    if(wrong) {cout<<"Wrong Assembly Instructions Check \"Report.txt\" file\n"; return 0;}
     writeobjCode(v);
     return 0;
 }
