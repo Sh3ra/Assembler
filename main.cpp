@@ -4,6 +4,7 @@
 #include "dataTypesHandler.h"
 
 using namespace std;
+dataTypesHandler zattout;
 
 void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
 {
@@ -342,7 +343,7 @@ string binToHex(string bin)
     return hex;
 }
 
-int get_TA(string op, dataTypesHandler zattout, int lctr)
+int get_TA(string op, int lctr)
 {
     if (op[0] == '#' || op[0] == '@')
     {
@@ -369,7 +370,7 @@ int get_TA(string op, dataTypesHandler zattout, int lctr)
     }
 }
 
-string get_address(string op, string opernad, objectCodeTable table, dataTypesHandler zattout, int lctr)
+string get_address(string op, string opernad, objectCodeTable table,  int lctr)
 {
     string disp = "";
     string bin = HexToBin(table.table[op].second);
@@ -392,7 +393,7 @@ string get_address(string op, string opernad, objectCodeTable table, dataTypesHa
     else
         bin += "0";
     int d = 0;
-    int ta = get_TA(opernad, zattout, lctr);
+    int ta = get_TA(opernad, lctr);
     d = ta;
     if (op[0] == '+' && d > 1048575)
     {
@@ -465,9 +466,18 @@ string register_register(string op, objectCodeTable table)
     return res;
 }
 
+void resolve_vector(string code, string Slctr2)
+{
+    for (int i = 0; i < zattout.needs_Updates[code].size(); i++)
+    {
+        makeNewT(zattout.needs_Updates[code][i]);
+        TRecords[Tindex] += "02^" + Slctr2;
+    }
+    zattout.needs_Updates[code].clear();
+}
+
 void writeobjCode(vector<vector<string>> code)
 {
-    dataTypesHandler zattout;
     objectCodeTable table;
     freopen("objcode.txt", "w", stdout);
     int prog_len = 0;
@@ -507,24 +517,31 @@ void writeobjCode(vector<vector<string>> code)
         }
         else if (code[i][0] != "")
         {
-            if(zattout.symbolicTable[code[i][0]]=="*")
+            if (zattout.symbolicTable[code[i][0]] == "*")
             {
-                //22fl el telxt el enta feh
-                //23ml new text lkol el address el fel mapofvector
-                //2ft7 text gded lba2 el code
+                string temp = decToHexa(line.size() / 2);
+                while (temp.size() < 2)
+                {
+                    temp = "0" + temp;
+                }
+                TRecords[Tindex] += temp + line;
+                line = "^";
+                done = false;
+                i--;
+                resolve_vector(code[i][0], Slctr2);
             }
-            add_label_to_symbtable(code[i][0]);
-        }
-        prev = lctr;
-        lctr += table.table[code[i][1]].first;
-        if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
-        {
-            line += table.table[code[i][1]].second;
-            line += register_register(code[i][2], table);
-        }
-        else
-        {
-            line += get_address(code[i][1], code[i][2], table, zattout, lctr);
+            zattout.symbolicTable[code[i][0]] = Slctr2;
+            prev = lctr;
+            lctr += table.table[code[i][1]].first;
+            if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
+            {
+                line += table.table[code[i][1]].second;
+                line += register_register(code[i][2], table);
+            }
+            else
+            {
+                line += get_address(code[i][1], code[i][2], table, lctr);
+            }
         }
         Slctr = decToHexa(prev);
         while (Slctr.size() < 6)

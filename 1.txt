@@ -1,12 +1,9 @@
-         Start   0000
-ALPHA    RESW    1
-Beta     WORD    22
-GAMMA    WORD    1
-         LDA     Beta
-         MUL     #4
-         STA     Beta
-         LDA     GAMMA
-         MUL     #3
-         ADD     Beta
-         STA     ALPHA
+         START   0000
+BLANK    BYTE    C'k'
+STR      RESB    100
+PC       LDCH    BLANK
+         LDX     #0
+LOOP     STCH    STR,X
+         TIX     #100
+         JLT     LOOP
          END
