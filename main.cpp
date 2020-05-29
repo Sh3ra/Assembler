@@ -179,6 +179,12 @@ string toUpperCase(string x)
     return x;
 }
 
+bool isUnique(string s, objectCodeTable t){
+    if (t.table.find(s) != t.table.end() || zattout.symbolicTable.find(s) != zattout.symbolicTable.end())
+        return false;
+    return true;
+}
+
 string decToHexa(int num)
 {
     map<int, char> m;
