@@ -9,6 +9,8 @@ dataTypesHandler zattout;
 void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
 {
     bool endStar = false;
+    if (str[str.length() - 1] == '\r')
+        str.erase(str.end() - 1);
     while (str[str.length() - 1] == ' ')
         str.erase(str.end() - 1);
     if (str[str.length() - 1] == '*')
@@ -87,14 +89,15 @@ vector<vector<string>> convertToLabels(vector<string> code)
         std::string token;
         while ((pos = s.find(delimiter)) != std::string::npos)
         {
-            if (token == "rsub")
-            {
-                instructions[i].push_back("");
-                break;
-            }
+            
             token = s.substr(0, pos);
             instructions[i].push_back(token);
             s.erase(0, pos + delimiter.length());
+        }
+        if (token == "rsub")
+        {
+            instructions[i].push_back("");
+            break;
         }
     }
     for (int i = 0; i < instructions.size(); i++)
