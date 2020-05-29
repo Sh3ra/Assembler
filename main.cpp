@@ -15,7 +15,7 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
             while (str[i] != '\'')
                 i++;
         }
-        if (str[i] == '\t')
+        if (str[i] == '\t' || str[i] == '\\' || str[i] == ';' || str[i] == ':' || str[i] == '?')
             str[i] = ' ';
     }
     for (int i = 0; i < str.length(); i++)
@@ -30,12 +30,12 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
         }
         if (i + 1 < str.length())
         {
-            if (str[i] == ' ' && (str[i + 1] == ' ' || str[i + 1] == ','))
+            if (str[i] == ' ' && (str[i + 1] == ' ' || str[i + 1] == ',' ||str[i+1]=='/'||str[i+1]=='*' || str[i+1]=='-' || str[i+1] == '+'))
             {
                 str.erase(str.begin() + i);
                 i--;
             }
-            else if (str[i] == ',' && str[i + 1] == ' ')
+            else if ((str[i] == ','||str[i]=='/'||str[i]=='*' || str[i]=='-' || str[i] == '+' )&& str[i + 1] == ' ')
             {
                 str.erase(str.begin() + i + 1);
                 i--;
@@ -106,15 +106,17 @@ vector<string> readFile(const string &filename)
 
 vector<regex> initializeRegexVector()
 {
+    string address =R"((([a-z]\w*)* | \d{1,4})((\*|-|/|\+)(([a-z]\w*)* | \d{1,4}))*)";
+    string accessAddress = R"((\*|(#|@)?([a-z]\w*(,(#|@)?([a-z]\w*|\d{1,4}))?|\d{1,4})))";
     vector<regex> regexVector;
-    string declarationRes = R"([a-z]\w*\s(resb|resw)\s\d{1,4})";
-    string declarationByte = R"([a-z]\w*\s(byte)\s(x'([a-f0-9]{0,14})'|c'(\D|\S){0,15}'))";
+    string declarationRes = R"([a-z]\w*\s(resb|resw)\s)"+address;
+    string declarationByte = R"([a-z]\w*\s(byte)\s(x'([a-f0-9]{0,14})'|c'(\D|\S){0,15}'))" + accessAddress +"("+ R"(\*|\+\-\/)" + accessAddress + ")*";
     string declarationWord = R"([a-z]\w*\s(word)\s-?\d{1,4})";
     regex declaration("(" + declarationWord + "|" + declarationByte + "|" + declarationRes + ")");
     regexVector.push_back(declaration);
-    regex access(R"(([a-z]\w*\s)?\+?(st|ld)(x|a|b|s|t|ch)\s(\*|(#|@)?([a-z]\w*|\d{1,4})(,([a-z]\w*|\d{1,4}))?))");
+    regex access(R"(([a-z]\w*\s)?\+?(st|ld)(x|a|b|s|t|ch)\s)");
     regexVector.push_back(access);
-    regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tixr)\s(\*|[a-z]\w*))");
+    regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tixr)\s)"+address);
     regexVector.push_back(jump);
     regex rsub("rsub");
     regexVector.push_back(rsub);
@@ -122,6 +124,10 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(commentLine);
     regex emptyLine("");
     regexVector.push_back(emptyLine);
+    regex LTORG("ltorg");
+    regexVector.push_back(LTORG);
+    regex EQU(R"([a-z]\w*\sequ\s)"+accessAddress);
+    regex ORG(R"(org\s)"+ accessAddress);
     return regexVector;
 }
 
