@@ -89,7 +89,7 @@ vector<vector<string>> convertToLabels(vector<string> code)
         std::string token;
         while ((pos = s.find(delimiter)) != std::string::npos)
         {
-            
+
             token = s.substr(0, pos);
             instructions[i].push_back(token);
             s.erase(0, pos + delimiter.length());
@@ -152,7 +152,7 @@ vector<regex> initializeRegexVector()
     string declarationWord = R"([a-z](\w|$)*\s(word)\s-?\d{1,4})";
     regex declaration("(" + declarationWord + "|" + declarationByte + "|" + declarationRes + ")");
     regexVector.push_back(declaration);
-    regex access(R"(([a-z]\w*\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))"+address);
+    regex access(R"(([a-z]\w*\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))" + address);
     regexVector.push_back(access);
     regex jump(R"(([a-z](\w|$)*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
     regexVector.push_back(jump);
@@ -160,7 +160,7 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(rsub);
     regex LTORG("ltorg");
     regexVector.push_back(LTORG);
-    regex EQU(R"([a-z](\w|$)*\sequ\s)" +address);
+    regex EQU(R"([a-z](\w|$)*\sequ\s)" + address);
     regexVector.push_back(EQU);
     regex ORG(R"(org\s)" + address);
     regexVector.push_back(ORG);
@@ -397,9 +397,10 @@ string binToHex(string bin)
     return hex;
 }
 
-int get_TA(string op, int lctr) 
+int get_TA(string op, int lctr)
 {
-    if (op == "*") return lctr;
+    if (op == "*")
+        return lctr;
     if (op[0] == '#' || op[0] == '@')
     {
         op = op.substr(1, op.size());
@@ -580,62 +581,82 @@ void writeobjCode(vector<vector<string>> code)
         else if (code[i][1] == "org")
         {
             string target = code[i][2], newTarget = "", number = "";
-            if (code[i][2].find('+') != string::npos || code[i][2].find('-') != string::npos){
+            if (code[i][2].find('+') != string::npos || code[i][2].find('-') != string::npos)
+            {
                 int j = 0;
-                for (; ; ++j) {
-                    if (target[j] != '+' || target[j] != '-'){
+                for (;; ++j)
+                {
+                    if (target[j] != '+' && target[j] != '-')
+                    {
                         newTarget += target[j];
-                    } else {
+                    }
+                    else
+                    {
                         j++;
                         break;
                     }
                 }
-                while (j < target.size()){
-                    number += target[j];
+                while (j < target.size())
+                {
+                    number += target[j++];
                 }
             }
             if (newTarget.size() != 0)
                 target = newTarget;
             int num;
-            if (number.size() != 0){
+            if (number.size() != 0)
+            {
                 num = stoi(number);
-            } else {
+            }
+            else
+            {
                 num = 0;
             }
             if (code[i][2].find('-') != string::npos)
                 num *= -1;
-            if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end()){
+            if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end())
+            {
                 lctr = getHex(zattout.symbolicTable[target]) + num;
             }
         }
         else if (code[i][1] == "equ")
         {
             string target = code[i][2], newTarget = "", number = "", newAddress;
-            if (code[i][2].find('+') != string::npos || code[i][2].find('-') != string::npos){
+            if (code[i][2].find('+') != string::npos || code[i][2].find('-') != string::npos)
+            {
                 int j = 0;
-                for (; ; ++j) {
-                    if (target[j] != '+' || target[j] != '-'){
+                for (;; ++j)
+                {
+                    if (target[j] != '+' || target[j] != '-')
+                    {
                         newTarget += target[j];
-                    } else {
+                    }
+                    else
+                    {
                         j++;
                         break;
                     }
                 }
-                while (j < target.size()){
+                while (j < target.size())
+                {
                     number += target[j];
                 }
             }
             if (newTarget.size() != 0)
                 target = newTarget;
             int num;
-            if (number.size() != 0){
+            if (number.size() != 0)
+            {
                 num = stoi(number);
-            } else {
+            }
+            else
+            {
                 num = 0;
             }
             if (code[i][2].find('-') != string::npos)
                 num *= -1;
-            if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end()){
+            if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end())
+            {
                 zattout.symbolicTable[code[i][0]] = decToHexa(getHex(zattout.symbolicTable[target]) + num);
             }
         }
@@ -700,7 +721,7 @@ void writeobjCode(vector<vector<string>> code)
         {
             Slctr2 = "0" + Slctr2;
         }
-        if (prev / 30 < lctr / 30)
+        if (prev / 30 < lctr / 30 && line!="^")
         {
             string temp = decToHexa(line.size() / 2);
             while (temp.size() < 2)
@@ -721,6 +742,8 @@ void writeobjCode(vector<vector<string>> code)
         {
             temp = "0" + temp;
         }
+        if(TRecords.empty())
+            makeNewT(Slctr2);
         TRecords[Tindex] += temp + line;
 
         while (code[0][0].size() < 6)
@@ -728,7 +751,7 @@ void writeobjCode(vector<vector<string>> code)
             code[0][0] += " ";
         }
     }
-    else
+    else if(TRecords.size()>0)
         TRecords.pop_back();
     string Sprog_len = decToHexa(lctr - 1 - getHex(code[0][2]));
 
@@ -750,20 +773,25 @@ int main()
     vector<regex> regexVector = initializeRegexVector();
     vector<string> code = readFile("1.txt");
     bool wrong = false;
-    freopen("report.txt","w",stdout);
+    freopen("report.txt", "w", stdout);
     for (int i = 0; i < code.size(); i++)
     {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
-        for (int j = 0;j<regexVector.size();j++)
+        for (int j = 0; j < regexVector.size(); j++)
         {
             if (regex_match(code[i], regexVector[j]))
             {
-                if(j == 0 || j == 1) {code.erase(code.begin() + i); i--;}
+                if (j == 0 || j == 1)
+                {
+                    code.erase(code.begin() + i);
+                    i--;
+                }
                 found = true;
             }
         }
-        if (!found) {
+        if (!found)
+        {
             cout << "Unmatched " << i << " " << code[i] << endl;
             wrong = true;
         }
