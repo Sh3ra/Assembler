@@ -164,11 +164,11 @@ vector<regex> initializeRegexVector()
     regex ORG(R"(org\s)" + accessAddress);
     regexVector.push_back(ORG);
     //goz2 Marwan el gamed geddan
-    regex regToRegOperations(R"(^([a-z](?>\w|\$)+\s)?(rmo|addr|subr|mulr|divr|compr)\s([abstxl]\,[abstxl])$)");
+    regex regToRegOperations(R"(^([a-z](?:\w|\$)+\s)?(rmo|addr|subr|mulr|divr|compr)\s([abstxl]\,[abstxl])$)");
     regexVector.push_back(regToRegOperations);
-    regex tixr(R"(^([a-z](?>\w|\$)+\s)?(tixr)\s([abstxl])$)");
+    regex tixr(R"(^([a-z](?:\w|\$)+\s)?(tixr)\s([abstxl])$)");
     regexVector.push_back(tixr);
-    regex start(R"(^([a-z](?>\w|\$)+\s)?(start)\s([0-9abcdef]{1,4})$)");
+    regex start(R"(^([a-z](?:\w|\$)+\s)?(start)\s([0-9abcdef]{1,4})$)");
     regexVector.push_back(start);
     regex end(R"(^(end)(\s[0-9abcdef]{1,4})?$)");
     regexVector.push_back(end);
