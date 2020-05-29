@@ -8,6 +8,12 @@ dataTypesHandler zattout;
 
 void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
 {
+    bool endStar = false;
+    while (str[str.length() - 1] == ' ')
+        str.erase(str.end() - 1);
+    if (str[str.length()-1] =='*') {
+        endStar = true;
+    }
     for (int i = 0; i < str.length(); i++)
     {
         if (str[i] == '\'')
@@ -31,7 +37,7 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
         }
         if (i + 1 < str.length())
         {
-            if (str[i] == ' ' && (str[i + 1] == ' ' || str[i + 1] == ',' || str[i + 1] == '/' || str[i + 1] == '*' || str[i + 1] == '-' || str[i + 1] == '+'))
+            if (str[i] == ' ' && (str[i + 1] == ' ' || str[i + 1] == ',' || str[i + 1] == '/' || (!endStar && str[i + 1] == '*') || str[i + 1] == '-' || str[i + 1] == '+'))
             {
                 str.erase(str.begin() + i);
                 i--;
@@ -58,11 +64,27 @@ vector<vector<string>> convertToLabels(vector<string> code)
     {
         std::string s = code[i];
         std::string delimiter = " ";
+        if(s[s.length()-1]=='\'') {
+            size_t pos = 0;
+            std::string token;
+            int ct = 0;
+            while ((pos = s.find(delimiter)) != std::string::npos)
+            {
+                if(ct == 2) break;
+                token = s.substr(0, pos);
+                instructions[i].push_back(token);
+                s.erase(0, pos + delimiter.length());
+                ct++;
+            }
+            instructions[i].push_back(s);
+            continue;
+        }
         s += " ";
         size_t pos = 0;
         std::string token;
         while ((pos = s.find(delimiter)) != std::string::npos)
         {
+            if(token == "rsub"){instructions[i].push_back(""); break;}
             token = s.substr(0, pos);
             instructions[i].push_back(token);
             s.erase(0, pos + delimiter.length());
@@ -109,7 +131,6 @@ vector<regex> initializeRegexVector()
 {
     string address = R"((([a-z]\w*)* | \d{1,4})((\*|-|/|\+)(([a-z]\w*)* | \d{1,4}))*)";
     string accessAddress = R"((\*|(#|@)?([a-z]\w*(,(#|@)?([a-z]\w*|\d{1,4}))?|\d{1,4})))";
-
     vector<regex> regexVector;
     string declarationRes = R"([a-z]\w*\s(resb|resw)\s)" + address;
     string declarationByte = R"([a-z]\w*\s(byte)\s(x'([a-f0-9]{0,14})'|c'(\D|\S){0,15}'))" + accessAddress + "(" + R"(\*|\+\-\/)" + accessAddress + ")*";
@@ -120,7 +141,7 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(access);
     regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tixr)\s)" + address);
     regexVector.push_back(jump);
-    regex rsub("rsub");
+    regex rsub(R"(([a-z]\w*\s)?rsub(\s[a-z]\w*)?)");
     regexVector.push_back(rsub);
     regex commentLine(R"(\.(\W|\S)*)");
     regexVector.push_back(commentLine);
@@ -129,7 +150,9 @@ vector<regex> initializeRegexVector()
     regex LTORG("ltorg");
     regexVector.push_back(LTORG);
     regex EQU(R"([a-z]\w*\sequ\s)" + accessAddress);
+    regexVector.push_back(EQU);
     regex ORG(R"(org\s)" + accessAddress);
+    regexVector.push_back(ORG);
     return regexVector;
 }
 
@@ -154,6 +177,12 @@ string toUpperCase(string x)
             x[i] = x[i] - 32;
     }
     return x;
+}
+
+bool isUnique(string s, objectCodeTable t){
+    if (t.table.find(s) != t.table.end() || zattout.symbolicTable.find(s) != zattout.symbolicTable.end())
+        return false;
+    return true;
 }
 
 string decToHexa(int num)
@@ -188,7 +217,7 @@ string decToHexa(int num)
     }
     else
     {
-        u_int n = num;
+        unsigned int n = num;
         while (n)
         {
             res = m[n % 16] + res;
@@ -353,6 +382,10 @@ int get_TA(string op, int lctr)
     {
         return stoi(op);
     }
+    if (contain_comma(op))
+    {
+        op = op.substr(0, op.size() - 2);
+    }
     if (zattout.symbolicTable.find(op) == zattout.symbolicTable.end() || zattout.symbolicTable[op] == "*")
     {
         string Slctr2 = decToHexa(lctr + 1);
@@ -370,7 +403,7 @@ int get_TA(string op, int lctr)
     }
 }
 
-string get_address(string op, string opernad, objectCodeTable table,  int lctr)
+string get_address(string op, string opernad, objectCodeTable table, int lctr)
 {
     string disp = "";
     string bin = HexToBin(table.table[op].second);
@@ -471,7 +504,7 @@ void resolve_vector(string code, string Slctr2)
     for (int i = 0; i < zattout.needs_Updates[code].size(); i++)
     {
         makeNewT(zattout.needs_Updates[code][i]);
-        TRecords[Tindex] += "02^" + Slctr2;
+        TRecords[Tindex] += "02^" + Slctr2.substr(Slctr2.size()-4,4);
     }
     zattout.needs_Updates[code].clear();
 }
@@ -527,13 +560,30 @@ void writeobjCode(vector<vector<string>> code)
                 TRecords[Tindex] += temp + line;
                 line = "^";
                 done = false;
-                i--;
                 resolve_vector(code[i][0], Slctr2);
+                zattout.symbolicTable[code[i][0]] = Slctr2;
+                makeNewT(Slctr);
+                done = true;
             }
-            zattout.symbolicTable[code[i][0]] = Slctr2;
+            else
+                zattout.symbolicTable[code[i][0]] = Slctr2;
             prev = lctr;
             lctr += table.table[code[i][1]].first;
-            if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
+            if (contain_comma(code[i][2]) && (code[i][1][code[i][1].size() - 1] == 'r' || code[i][1] == "rmo"))
+            {
+                line += table.table[code[i][1]].second;
+                line += register_register(code[i][2], table);
+            }
+            else
+            {
+                line += get_address(code[i][1], code[i][2], table, lctr);
+            }
+        }
+        else
+        {
+            prev = lctr;
+            lctr += table.table[code[i][1]].first;
+            if (contain_comma(code[i][2]) && (code[i][1][code[i][1].size() - 1] == 'r' || code[i][1] == "rmo"))
             {
                 line += table.table[code[i][1]].second;
                 line += register_register(code[i][2], table);
@@ -553,7 +603,7 @@ void writeobjCode(vector<vector<string>> code)
         {
             Slctr2 = "0" + Slctr2;
         }
-        if (line.size() >= 57)
+        if (prev / 30 < lctr / 30)
         {
             string temp = decToHexa(line.size() / 2);
             while (temp.size() < 2)

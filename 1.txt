@@ -1,9 +1,2 @@
-         START   0000
-BLANK    BYTE    C'k'
-STR      RESB    100
-PC       LDCH    BLANK
-         LDX     #0
-LOOP     STCH    STR,X
-         TIX     #100
-         JLT     LOOP
-         END
+ ABC      J       *
+aads      rsub    zxzc
