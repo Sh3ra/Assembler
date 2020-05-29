@@ -74,8 +74,12 @@ public:
         {
             if (line[2][0] == 'c')
             {
-                char c = line[2][2];
-                result = to_string((int)c);
+                for (int i = 2; line[2][i] != '\''; ++i)
+                {
+                    char c = line[2][i];
+                    result += decToHexa2((int)c);
+                }
+                length=result.length()*2;
             }
             else if (line[2][0] == 'x')
             {
@@ -83,12 +87,13 @@ public:
                 {
                     result += line[2][i];
                 }
+                length=result.length();
             }
             else
             {
                 result = decToHexa2(stoi(line[2]));
             }
-            length = 2;
+            
         }
         else
         {

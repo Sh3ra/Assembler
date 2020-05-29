@@ -1,9 +1,29 @@
          START   0000
-BLANK    BYTE    C'k'
-STR      RESB    100
-PC       LDCH    BLANK
-         LDX     #0
-LOOP     STCH    STR,X
+TREAD    BYTE    C' '
+TWRITE   BYTE    X'04'
+EOF      BYTE    X'FFFF04'
+STRING   RESW    100
+         LDA     #0
+         RMO     A,X
+         LDA     EOF
+         RMO     A,B
+LOOP     TD      TREAD
+         JEQ     LOOP
+         RD      TREAD
+         COMPR   A,B
+         JEQ     FINISH
+         STCH    STRING,X
          TIX     #100
-         JLT     LOOP
+         J       LOOP
+FINISH   TD      TWRITE
+         JEQ     FINISH
+         RMO     X,A
+         SUB     #1
+         COMP    #0
+         JLT     ABC
+         RMO     A,X
+         LDCH    STRING,X
+         WD      TWRITE
+         J       FINISH
+ABC      J       *
          END

@@ -353,6 +353,10 @@ int get_TA(string op, int lctr)
     {
         return stoi(op);
     }
+    if (contain_comma(op))
+    {
+        op = op.substr(0, op.size() - 2);
+    }
     if (zattout.symbolicTable.find(op) == zattout.symbolicTable.end() || zattout.symbolicTable[op] == "*")
     {
         string Slctr2 = decToHexa(lctr + 1);
@@ -370,7 +374,7 @@ int get_TA(string op, int lctr)
     }
 }
 
-string get_address(string op, string opernad, objectCodeTable table,  int lctr)
+string get_address(string op, string opernad, objectCodeTable table, int lctr)
 {
     string disp = "";
     string bin = HexToBin(table.table[op].second);
@@ -471,7 +475,7 @@ void resolve_vector(string code, string Slctr2)
     for (int i = 0; i < zattout.needs_Updates[code].size(); i++)
     {
         makeNewT(zattout.needs_Updates[code][i]);
-        TRecords[Tindex] += "02^" + Slctr2;
+        TRecords[Tindex] += "02^" + Slctr2.substr(Slctr2.size()-4,4);
     }
     zattout.needs_Updates[code].clear();
 }
@@ -527,13 +531,30 @@ void writeobjCode(vector<vector<string>> code)
                 TRecords[Tindex] += temp + line;
                 line = "^";
                 done = false;
-                i--;
                 resolve_vector(code[i][0], Slctr2);
+                zattout.symbolicTable[code[i][0]] = Slctr2;
+                makeNewT(Slctr);
+                done = true;
             }
-            zattout.symbolicTable[code[i][0]] = Slctr2;
+            else
+                zattout.symbolicTable[code[i][0]] = Slctr2;
             prev = lctr;
             lctr += table.table[code[i][1]].first;
-            if (contain_comma(code[i][2]) && code[i][1][code[i][1].size() - 1] == 'r')
+            if (contain_comma(code[i][2]) && (code[i][1][code[i][1].size() - 1] == 'r' || code[i][1] == "rmo"))
+            {
+                line += table.table[code[i][1]].second;
+                line += register_register(code[i][2], table);
+            }
+            else
+            {
+                line += get_address(code[i][1], code[i][2], table, lctr);
+            }
+        }
+        else
+        {
+            prev = lctr;
+            lctr += table.table[code[i][1]].first;
+            if (contain_comma(code[i][2]) && (code[i][1][code[i][1].size() - 1] == 'r' || code[i][1] == "rmo"))
             {
                 line += table.table[code[i][1]].second;
                 line += register_register(code[i][2], table);
@@ -553,7 +574,7 @@ void writeobjCode(vector<vector<string>> code)
         {
             Slctr2 = "0" + Slctr2;
         }
-        if (line.size() >= 57)
+        if (prev / 30 < lctr / 30)
         {
             string temp = decToHexa(line.size() / 2);
             while (temp.size() < 2)
