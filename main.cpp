@@ -143,6 +143,10 @@ vector<regex> initializeRegexVector()
     string address = R"((\*|(#|@)?([a-z]($|\w)*|\d{1,4}))(,(#|@)?([a-z]($|\w)*|\d{1,4}))?)";
     string accessAddress = R"((\*|(#|@)?([a-z]\w*(,(#|@)?([a-z]\w*|\d{1,4}))?|\d{1,4})))";
     vector<regex> regexVector;
+    regex commentLine(R"(\.(\W|\S)*)");
+    regexVector.push_back(commentLine);
+    regex emptyLine("");
+    regexVector.push_back(emptyLine);
     string declarationRes = R"([a-z](\w|$)*\s(resb|resw)\s)" + address;
     string declarationByte = R"([a-z](\w|$)*\s(byte)\s(x'([a-fA-F0-9]{0,14})'|c'(\D|\S){0,15}'))";
     string declarationWord = R"([a-z](\w|$)*\s(word)\s-?\d{1,4})";
@@ -154,10 +158,6 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(jump);
     regex rsub(R"(([a-z](\w|$)*\s)?rsub(\s[a-z]\w*)?)");
     regexVector.push_back(rsub);
-    regex commentLine(R"(\.(\W|\S)*)");
-    regexVector.push_back(commentLine);
-    regex emptyLine("");
-    regexVector.push_back(emptyLine);
     regex LTORG("ltorg");
     regexVector.push_back(LTORG);
     regex EQU(R"([a-z](\w|$)*\sequ\s)" +address);
@@ -687,20 +687,24 @@ int main()
 {
     vector<regex> regexVector = initializeRegexVector();
     vector<string> code = readFile("1.txt");
-
+    bool wrong = false;
+    freopen("report.txt","w",stdout);
     for (int i = 0; i < code.size(); i++)
     {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
-        for (auto &j : regexVector)
+        for (int j = 0;j<regexVector.size();j++)
         {
-            if (regex_match(code[i], j))
+            if (regex_match(code[i], regexVector[j]))
             {
+                if(j == 0 || j == 1) {code.erase(code.begin() + i); i--;}
                 found = true;
             }
         }
-        if (!found)
+        if (!found) {
             cout << "Unmatched " << i << " " << code[i] << endl;
+            wrong = true;
+        }
     }
     vector<vector<string>> v = convertToLabels(code);
     writeobjCode(v);

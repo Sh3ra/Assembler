@@ -1,3 +1,15 @@
+CT       WORD    0
+SIZE     WORD    1
+STR      BYTE    C'A'
+NULL     BYTE    X'FFFFFF'
+P1       RESB    1
+P2       RESB    1
+INDEX1   WORD    0
+INDEX2   WORD    0
+TINDEX   WORD    0
+TEMP     RESB    1
+OUTDEV   BYTE    X'05'
+
 prog     start   0000
 bgn      LDX     #0
          LDT     CT
@@ -72,15 +84,5 @@ SWAP     LDA     NULL
          STCH    STR,X
          RSUB
 
-CT       WORD    0
-SIZE     WORD    1
-STR      BYTE    C'A'
-NULL     BYTE    X'FFFFFF'
-P1       RESB    1
-P2       RESB    1
-INDEX1   WORD    0
-INDEX2   WORD    0
-TINDEX   WORD    0
-TEMP     RESB    1
-OUTDEV   BYTE    X'05'
+
          END     BGN
