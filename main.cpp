@@ -139,7 +139,7 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(declaration);
     regex access(R"(([a-z]\w*\s)?\+?(st|ld)(x|a|b|s|t|ch)\s)");
     regexVector.push_back(access);
-    regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tixr)\s)" + address);
+    regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
     regexVector.push_back(jump);
     regex rsub(R"(([a-z]\w*\s)?rsub(\s[a-z]\w*)?)");
     regexVector.push_back(rsub);
@@ -153,6 +153,19 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(EQU);
     regex ORG(R"(org\s)" + accessAddress);
     regexVector.push_back(ORG);
+    //goz2 Marwan el gamed geddan
+    regex regToRegOperations(R"(^([a-z](?>\w|\$)+\s)?(rmo|addr|subr|mulr|divr|compr)\s([abstxl]\,[abstxl])$)");
+    regexVector.push_back(regToRegOperations);
+    regex tixr(R"(^([a-z](?>\w|\$)+\s)?(tixr)\s([abstxl])$)");
+    regexVector.push_back(tixr);
+    regex start(R"(^([a-z](?>\w|\$)+\s)?(start)\s([0-9abcdef]{1,4})$)");
+    regexVector.push_back(start);
+    regex end(R"(^(end)(\s[0-9abcdef]{1,4})?$)");
+    regexVector.push_back(end);
+    regex base(R"(^(base)\s([0-9abcdef]{1,4}|\*)$)");
+    regexVector.push_back(base);
+    regex nobase(R"(^(nobase)$)");
+    regexVector.push_back(nobase);
     return regexVector;
 }
 
