@@ -1,2 +1,86 @@
-adzxc     rsub
-          end
+prog     start   0000
+bgn      LDX     #0
+         LDT     CT
+LOOP1    LDA     INDEX1
+         COMP    CT
+         JEQ     ELSE
+         J       LOOP2
+VR       LDA     #0
+         STA     INDEX2
+         LDA     #0
+         LDA     INDEX1
+         ADD     #1
+         STA     INDEX1
+         J       LOOP1
+
+ELSE     LDX     #0
+         LDT     SIZE
+         J       LOOP3
+
+
+LOOP3    TD      OUTDEV
+         JEQ     LOOP3
+         LDCH    STR,X
+         WD      OUTDEV
+         TIXR    T
+         JEQ     ELSE2
+         J       LOOP3
+
+
+ELSE2    J       *
+
+LOOP2    LDA     INDEX2
+         COMP    CT
+         JEQ     VR
+         JSUB    CM
+NEW      LDA     INDEX2
+         ADD     #1
+         STA     INDEX2
+         J       LOOP2
+
+
+CM       LDX     INDEX2
+         LDA     NULL
+         LDCH    STR,X
+         STCH    P1
+         LDA     INDEX2
+         ADD     #1
+         STA     TINDEX
+         LDX     TINDEX
+         LDA     NULL
+         LDCH    STR,X
+         STCH    P2
+         LDA     NULL
+         LDA     P2
+         COMP    P1
+         JLT     ELSE3
+         RSUB
+
+ELSE3    JSUB    SWAP
+         J       NEW
+         
+SWAP     LDA     NULL
+         LDCH    P1
+         STCH    TEMP
+         LDA     NULL
+         LDCH    P2
+         LDX     INDEX2
+         STCH    STR,X
+         LDX     TINDEX
+         LDA     NULL
+         LDCH    TEMP
+         STCH    STR,X
+         RSUB
+
+CT       WORD    0
+SIZE     WORD    1
+STR      BYTE    C'A'
+NULL     BYTE    X'FFFFFF'
+P1       RESB    1
+P2       RESB    1
+INDEX1   WORD    0
+INDEX2   WORD    0
+TINDEX   WORD    0
+TEMP     RESB    1
+OUTDEV   BYTE    X'05'
+         END     BGN

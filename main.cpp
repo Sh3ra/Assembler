@@ -139,19 +139,20 @@ vector<string> readFile(const string &filename)
 
 vector<regex> initializeRegexVector()
 {
-    string address = R"((([a-z]\w*)* | \d{1,4})((\*|-|/|\+)(([a-z]\w*)* | \d{1,4}))*)";
+    string label = R"([a-z](\w|$)*)";
+    string address = R"((\*|(#|@)?([a-z]($|\w)*|\d{1,4}))(,(#|@)?([a-z]($|\w)*|\d{1,4}))?)";
     string accessAddress = R"((\*|(#|@)?([a-z]\w*(,(#|@)?([a-z]\w*|\d{1,4}))?|\d{1,4})))";
     vector<regex> regexVector;
-    string declarationRes = R"([a-z]\w*\s(resb|resw)\s)" + address;
-    string declarationByte = R"([a-z]\w*\s(byte)\s(x'([a-f0-9]{0,14})'|c'(\D|\S){0,15}'))" + accessAddress + "(" + R"(\*|\+\-\/)" + accessAddress + ")*";
-    string declarationWord = R"([a-z]\w*\s(word)\s-?\d{1,4})";
+    string declarationRes = R"([a-z](\w|$)*\s(resb|resw)\s)" + address;
+    string declarationByte = R"([a-z](\w|$)*\s(byte)\s(x'([a-fA-F0-9]{0,14})'|c'(\D|\S){0,15}'))";
+    string declarationWord = R"([a-z](\w|$)*\s(word)\s-?\d{1,4})";
     regex declaration("(" + declarationWord + "|" + declarationByte + "|" + declarationRes + ")");
     regexVector.push_back(declaration);
-    regex access(R"(([a-z]\w*\s)?\+?(st|ld)(x|a|b|s|t|ch)\s)");
+    regex access(R"(([a-z]\w*\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))"+address);
     regexVector.push_back(access);
-    regex jump(R"(([a-z]\w*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
+    regex jump(R"(([a-z](\w|$)*\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
     regexVector.push_back(jump);
-    regex rsub(R"(([a-z]\w*\s)?rsub(\s[a-z]\w*)?)");
+    regex rsub(R"(([a-z](\w|$)*\s)?rsub(\s[a-z]\w*)?)");
     regexVector.push_back(rsub);
     regex commentLine(R"(\.(\W|\S)*)");
     regexVector.push_back(commentLine);
@@ -159,9 +160,9 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(emptyLine);
     regex LTORG("ltorg");
     regexVector.push_back(LTORG);
-    regex EQU(R"([a-z]\w*\sequ\s)" + accessAddress);
+    regex EQU(R"([a-z](\w|$)*\sequ\s)" +address);
     regexVector.push_back(EQU);
-    regex ORG(R"(org\s)" + accessAddress);
+    regex ORG(R"(org\s)" + address);
     regexVector.push_back(ORG);
     //goz2 Marwan el gamed geddan
     regex regToRegOperations(R"(^([a-z](?:\w|\$)+\s)?(rmo|addr|subr|mulr|divr|compr)\s([abstxl]\,[abstxl])$)");
@@ -691,7 +692,6 @@ int main()
     {
         bool found = false;
         convertLowerCaseReplaceTabsAndSpacesBySingleSpace(code[i]);
-        cout << code[i] << "\n";
         for (auto &j : regexVector)
         {
             if (regex_match(code[i], j))
