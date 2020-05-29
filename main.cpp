@@ -577,6 +577,68 @@ void writeobjCode(vector<vector<string>> code)
             base = false;
             baseR = 0;
         }
+        else if (code[i][1] == "org")
+        {
+            string target = code[i][2], newTarget = "", number = "";
+            if (code[i][2].find('+') != string::npos || code[i][2].find('-') != string::npos){
+                int j = 0;
+                for (; ; ++j) {
+                    if (target[j] != '+' || target[j] != '-'){
+                        newTarget += target[j];
+                    } else {
+                        j++;
+                        break;
+                    }
+                }
+                while (j < target.size()){
+                    number += target[j];
+                }
+            }
+            if (newTarget.size() != 0)
+                target = newTarget;
+            int num;
+            if (number.size() != 0){
+                num = stoi(number);
+            } else {
+                num = 0;
+            }
+            if (code[i][2].find('-') != string::npos)
+                num *= -1;
+            if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end()){
+                lctr = getHex(zattout.symbolicTable[target]) + num;
+            }
+        }
+        else if (code[i][1] == "equ")
+        {
+            string target = code[i][2], newTarget = "", number = "", newAddress;
+            if (code[i][2].find('+') != string::npos || code[i][2].find('-') != string::npos){
+                int j = 0;
+                for (; ; ++j) {
+                    if (target[j] != '+' || target[j] != '-'){
+                        newTarget += target[j];
+                    } else {
+                        j++;
+                        break;
+                    }
+                }
+                while (j < target.size()){
+                    number += target[j];
+                }
+            }
+            if (newTarget.size() != 0)
+                target = newTarget;
+            int num;
+            if (number.size() != 0){
+                num = stoi(number);
+            } else {
+                num = 0;
+            }
+            if (code[i][2].find('-') != string::npos)
+                num *= -1;
+            if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end()){
+                zattout.symbolicTable[code[i][0]] = decToHexa(getHex(zattout.symbolicTable[target]) + num);
+            }
+        }
         else if (code[i][0] != "")
         {
             if (!isUnique(code[i][0], table))
