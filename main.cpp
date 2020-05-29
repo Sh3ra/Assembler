@@ -380,8 +380,9 @@ string binToHex(string bin)
     return hex;
 }
 
-int get_TA(string op, int lctr)
+int get_TA(string op, int lctr) 
 {
+    if (op == "*") return lctr;
     if (op[0] == '#' || op[0] == '@')
     {
         op = op.substr(1, op.size());
@@ -434,7 +435,7 @@ string get_address(string op, string opernad, objectCodeTable table, int lctr)
     else
         bin += "0";
     int d = 0;
-    if(op=="rsub")
+    if (op == "rsub")
         return table.table["rsub"].second;
     int ta = get_TA(opernad, lctr);
     d = ta;
@@ -563,7 +564,7 @@ void writeobjCode(vector<vector<string>> code)
         {
             if (!isUnique(code[i][0], table))
             {
-                cout << "Can't use (same label twice/syntax as label)-> "+code[i][0] << endl;
+                cout << "Can't use (same label twice/syntax as label)-> " + code[i][0] << endl;
                 failed = true;
                 break;
             }

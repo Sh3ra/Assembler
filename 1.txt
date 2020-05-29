@@ -1,4 +1,3 @@
 aads      start    000000
-aads      rsub    zxzc
-aads      rsub    zxzc
+          j        *
           end
