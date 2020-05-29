@@ -1,2 +1,4 @@
- ABC      J       *
+aads      start    000000
 aads      rsub    zxzc
+aads      rsub    zxzc
+          end

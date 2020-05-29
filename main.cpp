@@ -11,7 +11,8 @@ void convertLowerCaseReplaceTabsAndSpacesBySingleSpace(string &str)
     bool endStar = false;
     while (str[str.length() - 1] == ' ')
         str.erase(str.end() - 1);
-    if (str[str.length()-1] =='*') {
+    if (str[str.length() - 1] == '*')
+    {
         endStar = true;
     }
     for (int i = 0; i < str.length(); i++)
@@ -64,13 +65,15 @@ vector<vector<string>> convertToLabels(vector<string> code)
     {
         std::string s = code[i];
         std::string delimiter = " ";
-        if(s[s.length()-1]=='\'') {
+        if (s[s.length() - 1] == '\'')
+        {
             size_t pos = 0;
             std::string token;
             int ct = 0;
             while ((pos = s.find(delimiter)) != std::string::npos)
             {
-                if(ct == 2) break;
+                if (ct == 2)
+                    break;
                 token = s.substr(0, pos);
                 instructions[i].push_back(token);
                 s.erase(0, pos + delimiter.length());
@@ -84,7 +87,11 @@ vector<vector<string>> convertToLabels(vector<string> code)
         std::string token;
         while ((pos = s.find(delimiter)) != std::string::npos)
         {
-            if(token == "rsub"){instructions[i].push_back(""); break;}
+            if (token == "rsub")
+            {
+                instructions[i].push_back("");
+                break;
+            }
             token = s.substr(0, pos);
             instructions[i].push_back(token);
             s.erase(0, pos + delimiter.length());
@@ -179,7 +186,8 @@ string toUpperCase(string x)
     return x;
 }
 
-bool isUnique(string s, objectCodeTable t){
+bool isUnique(string s, objectCodeTable t)
+{
     if (t.table.find(s) != t.table.end() || zattout.symbolicTable.find(s) != zattout.symbolicTable.end())
         return false;
     return true;
@@ -426,6 +434,8 @@ string get_address(string op, string opernad, objectCodeTable table, int lctr)
     else
         bin += "0";
     int d = 0;
+    if(op=="rsub")
+        return table.table["rsub"].second;
     int ta = get_TA(opernad, lctr);
     d = ta;
     if (op[0] == '+' && d > 1048575)
@@ -504,7 +514,7 @@ void resolve_vector(string code, string Slctr2)
     for (int i = 0; i < zattout.needs_Updates[code].size(); i++)
     {
         makeNewT(zattout.needs_Updates[code][i]);
-        TRecords[Tindex] += "02^" + Slctr2.substr(Slctr2.size()-4,4);
+        TRecords[Tindex] += "02^" + Slctr2.substr(Slctr2.size() - 4, 4);
     }
     zattout.needs_Updates[code].clear();
 }
@@ -524,6 +534,7 @@ void writeobjCode(vector<vector<string>> code)
     string line = "^";
     bool done = false;
     int prev;
+    bool failed = false;
     for (int i = 1; i < code.size() - 1; i++)
     {
         if (line != "^" && !done)
@@ -550,6 +561,12 @@ void writeobjCode(vector<vector<string>> code)
         }
         else if (code[i][0] != "")
         {
+            if (!isUnique(code[i][0], table))
+            {
+                cout << "Can't use (same label twice/syntax as label)-> "+code[i][0] << endl;
+                failed = true;
+                break;
+            }
             if (zattout.symbolicTable[code[i][0]] == "*")
             {
                 string temp = decToHexa(line.size() / 2);
@@ -615,6 +632,8 @@ void writeobjCode(vector<vector<string>> code)
             done = false;
         }
     }
+    if (failed)
+        return;
     if (line != "^")
     {
         string temp = decToHexa(line.size() / 2);
