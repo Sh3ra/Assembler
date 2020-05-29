@@ -161,11 +161,7 @@ vector<regex> initializeRegexVector()
     string declarationWord = R"([a-z]((\$|\w)*)\s(word)\s-?\d{1,4})";
     regex declaration("(" + declarationWord + "|" + declarationByte + "|" + declarationRes + ")");
     regexVector.push_back(declaration);
-<<<<<<< HEAD
-    regex access(R"(([a-z]\w*\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))" + address);
-=======
     regex access(R"(([a-z]((\$|\w)*)\s)?(\+?(st|ld)(x|a|b|s|t|ch))(\s))"+address);
->>>>>>> 1749f715e7e1ec3edda53bb192682339204b390c
     regexVector.push_back(access);
     regex jump(R"(([a-z]((\$|\w)*)\s)?(td|rd|wd|jeq|jlt|jle|jge|j|jgt|jsub|tix|add|sub|mul|div|comp)\s)" + address);
     regexVector.push_back(jump);
@@ -173,11 +169,7 @@ vector<regex> initializeRegexVector()
     regexVector.push_back(rsub);
     regex LTORG("ltorg");
     regexVector.push_back(LTORG);
-<<<<<<< HEAD
-    regex EQU(R"([a-z](\w|$)*\sequ\s)" + address);
-=======
     regex EQU(R"([a-z]((\$|\w)*)\sequ\s)" +orgAddress);
->>>>>>> 1749f715e7e1ec3edda53bb192682339204b390c
     regexVector.push_back(EQU);
     regex ORG(R"(org\s)" + orgAddress);
     regexVector.push_back(ORG);
@@ -793,11 +785,7 @@ int main()
     vector<regex> regexVector = initializeRegexVector();
     vector<string> code = readFile(s);
     bool wrong = false;
-<<<<<<< HEAD
-    freopen("report.txt", "w", stdout);
-=======
     vector<string> report;
->>>>>>> 1749f715e7e1ec3edda53bb192682339204b390c
     for (int i = 0; i < code.size(); i++)
     {
         bool found = false;

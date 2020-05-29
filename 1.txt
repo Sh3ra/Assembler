@@ -3,7 +3,7 @@ stab     resb    1100
          org     stab
 symbol   resb    6
 value    resw    1
-value    resb    2
+value2   resb     2
          org     stab+1110
          lda     2
          END     BGN
