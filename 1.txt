@@ -1,2 +1,2 @@
- ABC      J       *
-aads      rsub    zxzc
+adzxc     rsub
+          end
