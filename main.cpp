@@ -636,7 +636,7 @@ void writeobjCode(vector<vector<string>> code)
                 int j = 0;
                 for (;; ++j)
                 {
-                    if (target[j] != '+' || target[j] != '-')
+                    if (target[j] != '+' && target[j] != '-')
                     {
                         newTarget += target[j];
                     }
@@ -648,7 +648,7 @@ void writeobjCode(vector<vector<string>> code)
                 }
                 while (j < target.size())
                 {
-                    number += target[j];
+                    number += target[j++];
                 }
             }
             if (newTarget.size() != 0)
@@ -667,6 +667,10 @@ void writeobjCode(vector<vector<string>> code)
             if (zattout.symbolicTable.find(target) != zattout.symbolicTable.end())
             {
                 zattout.symbolicTable[code[i][0]] = decToHexa(getHex(zattout.symbolicTable[target]) + num);
+                while (zattout.symbolicTable[code[i][0]].size() < 6)
+                {
+                    zattout.symbolicTable[code[i][0]] = "0" + zattout.symbolicTable[code[i][0]];
+                }
             }
         }
         else if (code[i][0] != "")
@@ -752,7 +756,7 @@ void writeobjCode(vector<vector<string>> code)
             temp = "0" + temp;
         }
         if(TRecords.empty())
-            makeNewT(Slctr2);
+            makeNewT(Slctr);
         TRecords[Tindex] += temp + line;
 
         while (code[0][0].size() < 6)

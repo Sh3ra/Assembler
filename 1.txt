@@ -1,9 +1,7 @@
 prog     start   0000
 stab     resb    1100
          org     stab
-symbol   resb    6
-value    resw    1
-value2   resb     2
-         org     stab+1110
-         lda     2
-         END     BGN
+symbol   equ     stab
+value    equ     stab+6
+flags    equ     stab+9
+         END
