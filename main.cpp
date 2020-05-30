@@ -188,9 +188,14 @@ string toUpperCase(string x) {
 }
 
 bool isUnique(string s, objectCodeTable t) {
-    if (t.table.find(s) != t.table.end() || zattout.symbolicTable.find(s) != zattout.symbolicTable.end())
+    if (t.table.find(s) != t.table.end() || zattout.symbolicTable.find(s) != zattout.symbolicTable.end()){
+        if (zattout.symbolicTable.find(s) != zattout.symbolicTable.end()){
+            if (zattout.symbolicTable[s] == "*")
+                return true;
+        }
         return false;
-    return true;
+    }
+            return true;
 }
 
 string decToHexa(int num) {
