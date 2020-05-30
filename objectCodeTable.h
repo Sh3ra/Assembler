@@ -12,8 +12,9 @@ using namespace std;
 
 class objectCodeTable {
 public:
-    unordered_map<string, pair<int,string>> table;
+    unordered_map<string, pair<int, string>> table;
     unordered_map<string, string> registersTable;
+
     objectCodeTable() {
         table["add"] = make_pair(3, "18");
         table["+add"] = make_pair(3, "18");

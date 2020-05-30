@@ -13,15 +13,13 @@ using namespace std;
 
 #endif //ASSEMBLER_DATATYPESHANDLER_H
 
-string decToHexa2(int n)
-{
+string decToHexa2(int n) {
     // char array to store hexadecimal number
     string hexaDeciNum = "";
 
     // counter for hexadecimal number array
     int i = 0;
-    while (n != 0)
-    {
+    while (n != 0) {
         // temporary variable to store remainder
         int temp = 0;
 
@@ -29,13 +27,10 @@ string decToHexa2(int n)
         temp = n % 16;
 
         // check if temp < 10
-        if (temp < 10)
-        {
+        if (temp < 10) {
             hexaDeciNum += temp + 48;
             i++;
-        }
-        else
-        {
+        } else {
             hexaDeciNum += temp + 55;
             i++;
         }
@@ -48,60 +43,43 @@ string decToHexa2(int n)
     return hexaDeciNum;
 }
 
-class dataTypesHandler
-{
+class dataTypesHandler {
 public:
     unordered_map<string, string> symbolicTable;
     unordered_map<string, vector<string>> needs_Updates;
 
-    pair<string, int> handleDataType(vector<string> line, string location)
-    {
+    pair<string, int> handleDataType(vector<string> line, string location) {
         symbolicTable[line[0]] = std::move(location);
         int length;
         string result;
         bool wordOrByte = true;
-        if (line[1] == "word")
-        {
+        if (line[1] == "word") {
             result = decToHexa2(stoi(line[2]));
             length = 6;
-        }
-        else if (line[1] == "resw")
-        {
+        } else if (line[1] == "resw") {
             length = 6 * stoi(line[2]);
             wordOrByte = false;
-        }
-        else if (line[1] == "byte")
-        {
-            if (line[2][0] == 'c')
-            {
-                for (int i = 2; line[2][i] != '\''; ++i)
-                {
+        } else if (line[1] == "byte") {
+            if (line[2][0] == 'c') {
+                for (int i = 2; line[2][i] != '\''; ++i) {
                     char c = line[2][i];
-                    result += decToHexa2((int)c);
+                    result += decToHexa2((int) c);
                 }
-                length=result.length()*2;
-            }
-            else if (line[2][0] == 'x')
-            {
-                for (int i = 2; line[2][i] != '\''; ++i)
-                {
+                length = result.length() * 2;
+            } else if (line[2][0] == 'x') {
+                for (int i = 2; line[2][i] != '\''; ++i) {
                     result += line[2][i];
                 }
-                length=result.length();
-            }
-            else
-            {
+                length = result.length();
+            } else {
                 result = decToHexa2(stoi(line[2]));
             }
-            
-        }
-        else
-        {
+
+        } else {
             length = 2 * stoi(line[2]);
             wordOrByte = false;
         }
-        while (result.size() < length && wordOrByte)
-        {
+        while (result.size() < length && wordOrByte) {
             result.insert(0, "0");
         }
         pair<string, int> out(result, length / 2);
