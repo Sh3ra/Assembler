@@ -617,6 +617,14 @@ void writeobjCode(vector<vector<string>> code) {
             done = false;
         }
     }
+    for (auto const& x : zattout.symbolicTable)
+    {
+        if (x.second == "*"){
+            failed = true;
+            cout << x.first + " is undefined";
+            break;
+        }
+    }
     if (failed)
         return;
     if (line != "^") {
