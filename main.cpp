@@ -402,9 +402,10 @@ string get_address(string op, string opernad, objectCodeTable table, int lctr) {
     } else
         bin += "0";
     int d = 0;
-    if (op == "rsub")
-        return table.table["rsub"].second;
-    int ta = get_TA(opernad, lctr);
+    int ta;
+    if (op == "rsub"||op=="+rsub")
+        ta=0;
+    else ta = get_TA(opernad, lctr);
     d = ta;
     if (op[0] == '+' && d > 1048575) {
         d = ta - lctr;
