@@ -84,7 +84,6 @@ vector<vector<string>> convertToLabels(vector<string> code) {
         }
         if (token == "rsub") {
             instructions[i].push_back("");
-            break;
         }
     }
     for (int i = 0; i < instructions.size(); i++) {
